@@ -1,19 +1,19 @@
-// Configuración de Firebase para las V Jornadas CEMNPA 2026
-// Reemplace estos valores con las credenciales de su proyecto de Firebase Console
+// Configuración oficial de Firebase para las V Jornadas CEMNPA 2026
 export const firebaseConfig = {
-  apiKey: "TU_API_KEY_AQUI",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyB7D0gdbzmmHiYKxy7IT8ky1lereNF3gWQ",
+  authDomain: "vjornadas-cemnpa.firebaseapp.com",
+  projectId: "vjornadas-cemnpa",
+  storageBucket: "vjornadas-cemnpa.firebasestorage.app",
+  messagingSenderId: "467358846133",
+  appId: "1:467358846133:web:bf2f803c888a41c5f0c2fc",
+  measurementId: "G-BGSSGDK17L"
 };
 
-// Verifica si las credenciales han sido provistas o permanecen como marcadores
+// Valida que las credenciales estén presentes
 export function isFirebaseConfigured() {
-  return (
-    firebaseConfig.apiKey !== "TU_API_KEY_AQUI" &&
-    firebaseConfig.projectId !== "TU_PROJECT_ID" &&
-    firebaseConfig.apiKey.trim().length > 0
+  return Boolean(
+    firebaseConfig.apiKey &&
+    firebaseConfig.projectId &&
+    firebaseConfig.apiKey !== "TU_API_KEY_AQUI"
   );
 }

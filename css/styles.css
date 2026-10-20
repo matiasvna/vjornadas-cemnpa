@@ -100,13 +100,13 @@ body {
 }
 
 .header-logo-wrapper {
-  padding: 24px 20px 16px 20px;
+  padding: 32px 24px 24px 24px;
   text-align: center;
   background-color: var(--bg-card);
 }
 
 .header-logo {
-  max-width: 260px;
+  max-width: 320px;
   width: 100%;
   height: auto;
   display: inline-block;
@@ -116,48 +116,49 @@ body {
 .header-hero {
   background-color: var(--color-primary);
   color: #ffffff;
-  padding: 24px 20px;
+  padding: 42px 24px;
   text-align: center;
 }
 
 .header-kicker {
-  font-size: 0.78rem;
-  letter-spacing: 1.5px;
-  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 2px;
+  font-weight: 800;
   color: #aee4f5;
   text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.header-title {
-  font-size: 1.75rem;
-  line-height: 1.25;
-  font-weight: 800;
-  color: #ffffff;
   margin-bottom: 12px;
 }
 
+.header-title {
+  font-size: 2.15rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+
 .header-subtitle {
-  font-size: 1.05rem;
-  line-height: 1.45;
-  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  font-weight: 600;
   color: #f1f9fc;
-  max-width: 720px;
-  margin: 0 auto 16px auto;
+  max-width: 780px;
+  margin: 0 auto;
 }
 
 .header-intro {
-  padding: 20px;
+  padding: 24px 20px;
   background-color: var(--bg-card);
   text-align: center;
   border-top: 1px solid rgba(38, 63, 120, 0.08);
 }
 
 .header-intro-text {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: var(--color-secondary);
-  line-height: 1.6;
-  max-width: 680px;
+  line-height: 1.65;
+  max-width: 740px;
   margin: 0 auto;
 }
 
@@ -514,42 +515,24 @@ body {
 .block-card-1 {
   background-color: var(--bg-block-1);
   border: 1px solid var(--border-block-1);
+  border-top: 6px solid var(--accent-block-1);
 }
 
 .block-card-2 {
   background-color: var(--bg-block-2);
   border: 1px solid var(--border-block-2);
+  border-top: 6px solid var(--accent-block-2);
 }
 
 .block-card-3 {
   background-color: var(--bg-block-3);
   border: 1px solid var(--border-block-3);
-}
-
-/* Espacio para imagen/foto del bloque */
-.block-image-container {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  position: relative;
-  background-color: #dcecf6;
-}
-
-.block-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.block-card:hover .block-image {
-  transform: scale(1.03);
+  border-top: 6px solid var(--accent-block-3);
 }
 
 /* Contenido de la tarjeta */
 .block-card-body {
-  padding: 22px 20px;
+  padding: 26px 22px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -852,20 +835,42 @@ body {
     margin-bottom: 32px;
   }
 
+  .header-logo-wrapper {
+    padding: 40px 32px 30px 32px;
+  }
+
   .header-logo {
-    max-width: 300px;
+    max-width: 420px;
+  }
+
+  .header-hero {
+    padding: 56px 36px;
+  }
+
+  .header-kicker {
+    font-size: 1rem;
+    letter-spacing: 2.2px;
   }
 
   .header-title {
-    font-size: 2.25rem;
+    font-size: 2.85rem;
+    margin-bottom: 16px;
   }
 
   .header-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.45rem;
+    line-height: 1.55;
+    max-width: 840px;
+  }
+
+  .header-intro-text {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    max-width: 800px;
   }
 
   .registration-section {
-    padding: 32px 36px;
+    padding: 36px 40px;
   }
 
   .blocks-grid {
@@ -873,17 +878,25 @@ body {
     align-items: stretch;
   }
 
-  .block-image-container {
-    height: 180px;
-  }
-
   .block-card-body {
-    padding: 22px 18px;
+    padding: 26px 20px;
   }
 }
 
 @media (min-width: 1024px) {
+  .header-hero {
+    padding: 68px 48px;
+  }
+
+  .header-title {
+    font-size: 3.25rem;
+  }
+
+  .header-subtitle {
+    font-size: 1.6rem;
+  }
+
   .blocks-section-title {
-    font-size: 1.75rem;
+    font-size: 1.85rem;
   }
 }
