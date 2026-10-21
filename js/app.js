@@ -388,7 +388,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedBlockBanner = document.getElementById("selectedBlockBanner");
   const selectedBlockText = document.getElementById("selectedBlockText");
   const resetBlockBtn = document.getElementById("resetBlockBtn");
-  const bloqueInteresInput = document.getElementById("bloqueInteresInput");
 
   const modalidadRadios = document.querySelectorAll('input[name="modalidad"]');
   const modalidadCards = document.querySelectorAll(".modality-card");
@@ -475,19 +474,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Manejo visual de checkboxes de momentos temáticos de interés
+  // Momentos temáticos: los checkboxes son la ÚNICA fuente de verdad.
+  // Banner, botones de las tarjetas y modal se derivan de su estado.
   const blockCheckboxes = document.querySelectorAll('input[name="bloquesInteres"]');
+  const blockButtons = document.querySelectorAll(".btn-block-action");
+
   blockCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", () => {
-      const card = checkbox.closest(".block-interest-card");
-      if (card) {
-        if (checkbox.checked) {
-          card.classList.add("is-selected");
-        } else {
-          card.classList.remove("is-selected");
-        }
-      }
-    });
+    checkbox.addEventListener("change", sincronizarBloques);
   });
 
   // 3. Limpieza de errores en tiempo real
@@ -496,44 +489,58 @@ document.addEventListener("DOMContentLoaded", () => {
   profesionSelect.addEventListener("change", () => clearError("profesion"));
   emailInput.addEventListener("input", () => clearError("email"));
 
-  // 4. Botones "Me interesa este contenido"
-  const blockButtons = document.querySelectorAll(".btn-block-action");
+  // 4. Botones "¡Me interesa!": marcan el bloque y llevan al formulario
   blockButtons.forEach(button => {
     button.addEventListener("click", () => {
-      const blockTitle = button.getAttribute("data-block-id");
-      const blockName = button.getAttribute("data-block-name") || "bloque 1";
-      const checkboxId = button.getAttribute("data-checkbox-id");
+      const checkbox = document.getElementById(button.getAttribute("data-checkbox-id"));
+      if (checkbox) checkbox.checked = true;
+      sincronizarBloques();
 
-      // Marcar el bloque de interés en el formulario
-      if (checkboxId) {
-        const checkbox = document.getElementById(checkboxId);
-        if (checkbox) {
-          checkbox.checked = true;
-          const card = checkbox.closest(".block-interest-card");
-          if (card) card.classList.add("is-selected");
-        }
-      }
-
-      seleccionarBloque(blockTitle, blockName);
+      document.getElementById("formulario-inscripcion")
+        .scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
   resetBlockBtn.addEventListener("click", () => {
-    bloqueInteresInput.value = "";
-    selectedBlockBanner.classList.remove("active");
+    blockCheckboxes.forEach(cb => { cb.checked = false; });
+    sincronizarBloques();
   });
 
-  function seleccionarBloque(blockTitle, blockName) {
-    bloqueInteresInput.value = blockTitle;
-    selectedBlockText.textContent = `Participaré del ${blockName}`;
-    selectedBlockBanner.classList.add("active");
+  /** Devuelve los números de bloque marcados, ordenados. Ej: [1, 3] */
+  function obtenerBloquesSeleccionados() {
+    return Array.from(blockCheckboxes)
+      .filter(cb => cb.checked)
+      .map(cb => parseInt(cb.id.replace("interes-bloque-", ""), 10))
+      .sort((a, b) => a - b);
+  }
 
-    const formSection = document.getElementById("formulario-inscripcion");
-    formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  /** [1] -> "1" | [1,2] -> "1, 2" | [1,2,3] -> "1, 2, 3" */
+  function formatearListaBloques(nums) {
+    return nums.join(", ");
+  }
 
-    const firstRadio = document.getElementById("modalidad-virtual");
-    if (firstRadio) {
-      firstRadio.focus();
+  /** Refleja el estado de los checkboxes en tarjetas, botones y banner. */
+  function sincronizarBloques() {
+    blockCheckboxes.forEach(cb => {
+      const card = cb.closest(".block-interest-card");
+      if (card) card.classList.toggle("is-selected", cb.checked);
+    });
+
+    blockButtons.forEach(btn => {
+      const cb = document.getElementById(btn.getAttribute("data-checkbox-id"));
+      const marcado = Boolean(cb && cb.checked);
+      btn.classList.toggle("is-selected", marcado);
+      btn.textContent = marcado ? "✓ Seleccionado" : "¡Me interesa!";
+    });
+
+    const nums = obtenerBloquesSeleccionados();
+    if (nums.length > 0) {
+      selectedBlockText.textContent = nums.length === 1
+        ? `Participaré del bloque ${nums[0]}`
+        : `Participaré de los bloques ${formatearListaBloques(nums)}`;
+      selectedBlockBanner.classList.add("active");
+    } else {
+      selectedBlockBanner.classList.remove("active");
     }
   }
 
@@ -654,12 +661,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const bloquesChecked = Array.from(
       document.querySelectorAll('input[name="bloquesInteres"]:checked')
     ).map(cb => cb.value);
+    const bloquesNumeros = obtenerBloquesSeleccionados();
 
-    const bloqueInteresResumen = bloquesChecked.length > 0 
-      ? bloquesChecked.join(" | ") 
-      : (bloqueInteresInput.value || "Todas las Jornadas (General)");
+    const bloqueInteresResumen = bloquesChecked.length > 0
+      ? bloquesChecked.join(" | ")
+      : "Todas las Jornadas (General)";
 
     const datosInscripcion = {
+      bloques: bloquesNumeros,
       modalidadAsistencia: modalidadSeleccionada,
       nombre: nombreInput.value.trim(),
       apellido: apellidoInput.value.trim(),
@@ -673,35 +682,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setLoadingState(true);
 
+    // El try abarca SOLO el guardado: un fallo de interfaz posterior
+    // nunca debe mostrarse como "error al guardar" si el dato ya está en la base.
     try {
-      const registrationId = await guardarInscripcion(datosInscripcion);
-
-      // Mostrar modal de éxito
-      mostrarModalExito(datosInscripcion, registrationId);
-
-      // Limpiar formulario
-      form.reset();
-      ciudadSelect.innerHTML = '<option value="" disabled selected>Primero seleccione una provincia</option>';
-      ciudadSelect.disabled = true;
-      otraCiudadGroup.style.display = "none";
-      modalidadCards.forEach(card => card.classList.remove("is-selected"));
-      blockCheckboxes.forEach(cb => {
-        cb.checked = false;
-        const card = cb.closest(".block-interest-card");
-        if (card) card.classList.remove("is-selected");
-      });
-      bloqueInteresInput.value = "";
-      selectedBlockBanner.classList.remove("active");
+      await guardarInscripcion(datosInscripcion);
     } catch (error) {
       console.error("[CEMNPA] Error al registrar la confirmación:", error);
       showAlert(
         "Ocurrió un error al procesar su confirmación. Por favor, verifique su conexión e intente nuevamente.",
         "error"
       );
-    } finally {
       setLoadingState(false);
+      return;
     }
+
+    setLoadingState(false);
+    mostrarModalExito(bloquesNumeros);
+    reiniciarFormulario();
   });
+
+  function reiniciarFormulario() {
+    form.reset();
+    ciudadSelect.innerHTML = '<option value="" disabled selected>Primero seleccione una provincia</option>';
+    ciudadSelect.disabled = true;
+    otraCiudadGroup.style.display = "none";
+    modalidadCards.forEach(card => card.classList.remove("is-selected"));
+    sincronizarBloques();
+  }
 
   function setLoadingState(isLoading) {
     if (isLoading) {
@@ -725,24 +732,16 @@ document.addEventListener("DOMContentLoaded", () => {
     formAlert.className = "form-alert";
   }
 
-  function mostrarModalExito(datos, id) {
-    let bloqueNombre = "BLOQUE 1";
-
-    if (datos.bloquesInteres && datos.bloquesInteres.length > 0) {
-      const match = datos.bloquesInteres[0].match(/Bloque\s*\d+/i);
-      if (match) {
-        bloqueNombre = match[0].toUpperCase();
-      }
-    } else if (bloqueInteresInput.value) {
-      const match = bloqueInteresInput.value.match(/Bloque\s*\d+/i);
-      if (match) {
-        bloqueNombre = match[0].toUpperCase();
-      }
-    }
-
+  function mostrarModalExito(bloquesNumeros) {
     const modalTitleEl = document.getElementById("modalTitle");
     if (modalTitleEl) {
-      modalTitleEl.textContent = `Inscripción registrada ${bloqueNombre}`;
+      if (bloquesNumeros.length === 0) {
+        modalTitleEl.textContent = "Inscripción registrada";
+      } else if (bloquesNumeros.length === 1) {
+        modalTitleEl.textContent = `Inscripto al bloque ${bloquesNumeros[0]}`;
+      } else {
+        modalTitleEl.textContent = `Inscripto a los bloques ${formatearListaBloques(bloquesNumeros)}`;
+      }
     }
 
     if (modalSummary) {
@@ -751,6 +750,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     confirmationModal.classList.add("active");
+    modalCloseBtn.focus();
   }
 
   modalCloseBtn.addEventListener("click", () => {

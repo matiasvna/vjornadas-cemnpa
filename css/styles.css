@@ -743,6 +743,15 @@ body {
 .block-card-3 .btn-block-action { background-color: var(--accent-block-3); }
 .block-card-3 .btn-block-action:hover { background-color: #1e7067; }
 
+/* Estado seleccionado: el bloque ya fue marcado en el formulario */
+.btn-block-action.is-selected {
+  background-color: #ffffff !important;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+.block-card-1 .btn-block-action.is-selected { color: var(--accent-block-1); }
+.block-card-2 .btn-block-action.is-selected { color: var(--accent-block-2); }
+.block-card-3 .btn-block-action.is-selected { color: var(--accent-block-3); }
+
 /* ==========================================================================
    4. Auspiciantes y Audiencia
    ========================================================================== */
