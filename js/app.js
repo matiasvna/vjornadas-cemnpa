@@ -648,6 +648,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalidadSeleccionada = document.querySelector('input[name="modalidad"]:checked').value;
     const ciudadFinal = ciudadSelect.value === "Otra localidad" 
       ? otraCiudadInput.value.trim() 
+      : ciudadSelect.value;
+
     // Momentos temáticos seleccionados
     const bloquesChecked = Array.from(
       document.querySelectorAll('input[name="bloquesInteres"]:checked')
