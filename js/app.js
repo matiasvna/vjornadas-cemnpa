@@ -475,18 +475,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Manejo visual de checkboxes de momentos temáticos de interés
+  const blockCheckboxes = document.querySelectorAll('input[name="bloquesInteres"]');
+  blockCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener("change", () => {
+      const card = checkbox.closest(".block-interest-card");
+      if (card) {
+        if (checkbox.checked) {
+          card.classList.add("is-selected");
+        } else {
+          card.classList.remove("is-selected");
+        }
+      }
+    });
+  });
+
   // 3. Limpieza de errores en tiempo real
   nombreInput.addEventListener("input", () => clearError("nombre"));
   apellidoInput.addEventListener("input", () => clearError("apellido"));
   profesionSelect.addEventListener("change", () => clearError("profesion"));
   emailInput.addEventListener("input", () => clearError("email"));
 
-  // 4. Botones "Inscribirse a este bloque"
+  // 4. Botones "Me interesa este contenido"
   const blockButtons = document.querySelectorAll(".btn-block-action");
   blockButtons.forEach(button => {
     button.addEventListener("click", () => {
       const blockTitle = button.getAttribute("data-block-id");
-      seleccionarBloque(blockTitle);
+      const blockName = button.getAttribute("data-block-name") || "bloque 1";
+      const checkboxId = button.getAttribute("data-checkbox-id");
+
+      // Marcar el bloque de interés en el formulario
+      if (checkboxId) {
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+          checkbox.checked = true;
+          const card = checkbox.closest(".block-interest-card");
+          if (card) card.classList.add("is-selected");
+        }
+      }
+
+      seleccionarBloque(blockTitle, blockName);
     });
   });
 
@@ -495,9 +523,9 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedBlockBanner.classList.remove("active");
   });
 
-  function seleccionarBloque(blockTitle) {
+  function seleccionarBloque(blockTitle, blockName) {
     bloqueInteresInput.value = blockTitle;
-    selectedBlockText.textContent = `Confirmación específica: ${blockTitle}`;
+    selectedBlockText.textContent = `Participaré del ${blockName}`;
     selectedBlockBanner.classList.add("active");
 
     const formSection = document.getElementById("formulario-inscripcion");
@@ -620,7 +648,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalidadSeleccionada = document.querySelector('input[name="modalidad"]:checked').value;
     const ciudadFinal = ciudadSelect.value === "Otra localidad" 
       ? otraCiudadInput.value.trim() 
-      : ciudadSelect.value;
+    // Momentos temáticos seleccionados
+    const bloquesChecked = Array.from(
+      document.querySelectorAll('input[name="bloquesInteres"]:checked')
+    ).map(cb => cb.value);
+
+    const bloqueInteresResumen = bloquesChecked.length > 0 
+      ? bloquesChecked.join(" | ") 
+      : (bloqueInteresInput.value || "Todas las Jornadas (General)");
 
     const datosInscripcion = {
       modalidadAsistencia: modalidadSeleccionada,
@@ -630,7 +665,8 @@ document.addEventListener("DOMContentLoaded", () => {
       correoElectronico: emailInput.value.trim().toLowerCase(),
       provincia: provinciaSelect.value,
       ciudad: ciudadFinal,
-      bloqueInteres: bloqueInteresInput.value || "Todas las Jornadas"
+      bloquesInteres: bloquesChecked.length > 0 ? bloquesChecked : ["Todas las Jornadas (General)"],
+      bloqueInteres: bloqueInteresResumen
     };
 
     setLoadingState(true);
@@ -647,6 +683,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ciudadSelect.disabled = true;
       otraCiudadGroup.style.display = "none";
       modalidadCards.forEach(card => card.classList.remove("is-selected"));
+      blockCheckboxes.forEach(cb => {
+        cb.checked = false;
+        const card = cb.closest(".block-interest-card");
+        if (card) card.classList.remove("is-selected");
+      });
       bloqueInteresInput.value = "";
       selectedBlockBanner.classList.remove("active");
     } catch (error) {
@@ -683,16 +724,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function mostrarModalExito(datos, id) {
-    modalSummary.innerHTML = `
-      <p><strong>Número de Registro:</strong> ${id}</p>
-      <p><strong>Participante:</strong> ${datos.nombre} ${datos.apellido}</p>
-      <p><strong>Modalidad:</strong> ${datos.modalidadAsistencia}</p>
-      <p><strong>Profesión / Ocupación:</strong> ${datos.profesionOcupacion}</p>
-      <p><strong>Correo electrónico:</strong> ${datos.correoElectronico}</p>
-      <p><strong>Provincia:</strong> ${datos.provincia}</p>
-      <p><strong>Ciudad / Localidad:</strong> ${datos.ciudad}</p>
-      <p><strong>Participación:</strong> ${datos.bloqueInteres}</p>
-    `;
+    let bloqueNombre = "BLOQUE 1";
+
+    if (datos.bloquesInteres && datos.bloquesInteres.length > 0) {
+      const match = datos.bloquesInteres[0].match(/Bloque\s*\d+/i);
+      if (match) {
+        bloqueNombre = match[0].toUpperCase();
+      }
+    } else if (bloqueInteresInput.value) {
+      const match = bloqueInteresInput.value.match(/Bloque\s*\d+/i);
+      if (match) {
+        bloqueNombre = match[0].toUpperCase();
+      }
+    }
+
+    const modalTitleEl = document.getElementById("modalTitle");
+    if (modalTitleEl) {
+      modalTitleEl.textContent = `Inscripción registrada ${bloqueNombre}`;
+    }
+
+    if (modalSummary) {
+      modalSummary.style.display = "none";
+      modalSummary.innerHTML = "";
+    }
+
     confirmationModal.classList.add("active");
   }
 

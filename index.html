@@ -55,18 +55,121 @@
 
     <main>
       <!-- ====================================================================
-           2. FORMULARIO DE INSCRIPCIÓN (ACCESIBLE EN MÓVILES)
+           1. BLOQUES TEMÁTICOS (PRESENTACIÓN Y SELECCIÓN)
+           ==================================================================== -->
+      <section class="blocks-section" aria-labelledby="blocks-heading">
+        <div class="blocks-section-header">
+          <h2 id="blocks-heading" class="blocks-section-title">Bloques Temáticos</h2>
+        </div>
+
+        <div class="blocks-grid">
+          <!-- Tarjeta 1 (Color de acento #168ab8) -->
+          <article class="block-card block-card-1">
+            <div class="block-card-body">
+              <span class="block-tag">Bloque 1</span>
+              <h3 class="block-title">Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región</h3>
+              
+              <div class="block-themes-heading">Temas</div>
+              <ul class="block-themes-list">
+                <li>Medicina nuclear en la Patagonia Austral</li>
+                <li>Cardiología nuclear</li>
+                <li>Introducción a la radioncología</li>
+                <li>Telerradiología</li>
+              </ul>
+
+              <div class="block-schedule">
+                Jueves 5 de noviembre · 9:00 a 12:00 h · Auditorio OSDE
+              </div>
+
+              <button 
+                type="button" 
+                class="btn-block-action" 
+                data-block-id="Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región"
+                data-block-name="bloque 1"
+                data-checkbox-id="interes-bloque-1"
+              >
+                ¡Me interesa!
+              </button>
+            </div>
+          </article>
+
+          <!-- Tarjeta 2 (Color de acento #236fa1) -->
+          <article class="block-card block-card-2">
+            <div class="block-card-body">
+              <span class="block-tag">Bloque 2</span>
+              <h3 class="block-title">Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias</h3>
+              
+              <div class="block-themes-heading">Temas</div>
+              <ul class="block-themes-list">
+                <li>Diagnóstico molecular</li>
+                <li>Seguridad en medicamentos oncológicos</li>
+                <li>Cáncer cervicouterino</li>
+                <li>Decisiones interdisciplinarias</li>
+              </ul>
+
+              <div class="block-schedule">
+                Jueves 5 de noviembre · 14:00 a 18:00 h · Auditorio OSDE
+              </div>
+
+              <button 
+                type="button" 
+                class="btn-block-action" 
+                data-block-id="Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias"
+                data-block-name="bloque 2"
+                data-checkbox-id="interes-bloque-2"
+              >
+                ¡Me interesa!
+              </button>
+            </div>
+          </article>
+
+          <!-- Tarjeta 3 (Color de acento #268f83) -->
+          <article class="block-card block-card-3">
+            <div class="block-card-body">
+              <span class="block-tag">Bloque 3</span>
+              <h3 class="block-title">Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad</h3>
+              
+              <div class="block-themes-heading">Temas</div>
+              <ul class="block-themes-list">
+                <li>Psicooncología</li>
+                <li>Seguridad radiológica</li>
+                <li>Farmacia oncológica</li>
+                <li>Vía subcutánea</li>
+              </ul>
+
+              <div class="block-schedule">
+                Viernes 6 de noviembre · 9:00 a 12:00 h · Auditorio OSDE
+              </div>
+
+              <button 
+                type="button" 
+                class="btn-block-action" 
+                data-block-id="Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad"
+                data-block-name="bloque 3"
+                data-checkbox-id="interes-bloque-3"
+              >
+                ¡Me interesa!
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           2. FORMULARIO DE CONFIRMACIÓN (ABAJO, RECIBE EL DESPLAZAMIENTO)
            ==================================================================== -->
       <section class="registration-section" id="formulario-inscripcion" aria-labelledby="form-heading">
         <div class="section-header">
           <h2 id="form-heading" class="section-title">Formulario de confirmación</h2>
-          <p class="section-description">Complete los siguientes datos para confirmar su participación en las Jornadas.</p>
+          <p class="section-description">
+            Complete los siguientes datos para confirmar su participación en las Jornadas. Para acompañar una mejor organización del encuentro, te invitamos a indicarnos en cuáles momentos temáticos te gustaría participar.
+          </p>
         </div>
 
         <!-- Indicador contextual si el usuario seleccionó un bloque específico -->
         <div id="selectedBlockBanner" class="selected-block-banner" role="status" aria-live="polite">
-          <span id="selectedBlockText">Inscripción para: Bloque 1</span>
-          <button type="button" id="resetBlockBtn" class="selected-block-reset">Quitar selección específica</button>
+          <span id="selectedBlockText">Participaré del bloque 1</span>
+          <button type="button" id="resetBlockBtn" class="selected-block-reset">Quitar selección</button>
         </div>
 
         <form id="registrationForm" novalidate>
@@ -205,8 +308,40 @@
               <span class="error-message" id="error-otra-ciudad">Por favor, ingrese el nombre de su localidad.</span>
             </div>
 
-            <!-- Campo oculto para bloque de interés si se presionó desde tarjeta -->
-            <input type="hidden" id="bloqueInteresInput" name="bloqueInteres" value="">
+            <!-- Momentos temáticos de interés (Opcional - Selección múltiple) -->
+            <div class="form-group">
+              <label class="form-label" id="bloquesInteresLabel">
+                Momentos temáticos de interés <span class="optional-mark">(Opcional)</span>
+              </label>
+              <div class="blocks-interest-options" role="group" aria-labelledby="bloquesInteresLabel">
+                <label class="block-interest-card" for="interes-bloque-1">
+                  <input type="checkbox" id="interes-bloque-1" name="bloquesInteres" value="Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región">
+                  <span class="block-interest-check" aria-hidden="true"></span>
+                  <div class="block-interest-info">
+                    <span class="block-interest-title">Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región</span>
+                    <span class="block-interest-date">Jueves 5 de noviembre · 9:00 a 12:00 h · Auditorio OSDE</span>
+                  </div>
+                </label>
+
+                <label class="block-interest-card" for="interes-bloque-2">
+                  <input type="checkbox" id="interes-bloque-2" name="bloquesInteres" value="Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias">
+                  <span class="block-interest-check" aria-hidden="true"></span>
+                  <div class="block-interest-info">
+                    <span class="block-interest-title">Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias</span>
+                    <span class="block-interest-date">Jueves 5 de noviembre · 14:00 a 18:00 h · Auditorio OSDE</span>
+                  </div>
+                </label>
+
+                <label class="block-interest-card" for="interes-bloque-3">
+                  <input type="checkbox" id="interes-bloque-3" name="bloquesInteres" value="Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad">
+                  <span class="block-interest-check" aria-hidden="true"></span>
+                  <div class="block-interest-info">
+                    <span class="block-interest-title">Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad</span>
+                    <span class="block-interest-date">Viernes 6 de noviembre · 9:00 a 12:00 h · Auditorio OSDE</span>
+                  </div>
+                </label>
+              </div>
+            </div>
 
             <!-- Botón de Envío -->
             <div class="form-group">
@@ -223,102 +358,7 @@
       </section>
 
       <!-- ====================================================================
-           3. BLOQUES DEL EVENTO
-           ==================================================================== -->
-      <section class="blocks-section" aria-labelledby="blocks-heading">
-        <div class="blocks-section-header">
-          <h2 id="blocks-heading" class="blocks-section-title">Bloques Temáticos</h2>
-        </div>
-
-        <div class="blocks-grid">
-          <!-- Tarjeta 1 (Color de acento #168ab8) -->
-          <article class="block-card block-card-1">
-            <div class="block-card-body">
-              <span class="block-tag">Bloque 1</span>
-              <h3 class="block-title">Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región</h3>
-              
-              <div class="block-themes-heading">Temas</div>
-              <ul class="block-themes-list">
-                <li>Medicina nuclear en la Patagonia Austral</li>
-                <li>Cardiología nuclear</li>
-                <li>Introducción a la radioncología</li>
-                <li>Telerradiología</li>
-              </ul>
-
-              <div class="block-schedule">
-                Jueves 5 de noviembre · 9:00 a 12:00 h · Auditorio OSDE
-              </div>
-
-              <button 
-                type="button" 
-                class="btn-block-action" 
-                data-block-id="Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región"
-              >
-                Inscribirse a este bloque
-              </button>
-            </div>
-          </article>
-
-          <!-- Tarjeta 2 (Color de acento #236fa1) -->
-          <article class="block-card block-card-2">
-            <div class="block-card-body">
-              <span class="block-tag">Bloque 2</span>
-              <h3 class="block-title">Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias</h3>
-              
-              <div class="block-themes-heading">Temas</div>
-              <ul class="block-themes-list">
-                <li>Diagnóstico molecular</li>
-                <li>Seguridad en medicamentos oncológicos</li>
-                <li>Cáncer cervicouterino</li>
-                <li>Decisiones interdisciplinarias</li>
-              </ul>
-
-              <div class="block-schedule">
-                Jueves 5 de noviembre · 14:00 a 18:00 h · Auditorio OSDE
-              </div>
-
-              <button 
-                type="button" 
-                class="btn-block-action" 
-                data-block-id="Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias"
-              >
-                Inscribirse a este bloque
-              </button>
-            </div>
-          </article>
-
-          <!-- Tarjeta 3 (Color de acento #268f83) -->
-          <article class="block-card block-card-3">
-            <div class="block-card-body">
-              <span class="block-tag">Bloque 3</span>
-              <h3 class="block-title">Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad</h3>
-              
-              <div class="block-themes-heading">Temas</div>
-              <ul class="block-themes-list">
-                <li>Psicooncología</li>
-                <li>Seguridad radiológica</li>
-                <li>Farmacia oncológica</li>
-                <li>Vía subcutánea</li>
-              </ul>
-
-              <div class="block-schedule">
-                Viernes 6 de noviembre · 9:00 a 12:00 h · Auditorio OSDE
-              </div>
-
-              <button 
-                type="button" 
-                class="btn-block-action" 
-                data-block-id="Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad"
-              >
-                Inscribirse a este bloque
-              </button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           4. AUDIENCIA Y AUSPICIANTES
+           3. AUDIENCIA Y AUSPICIANTES
            ==================================================================== -->
       <section class="sponsors-section" aria-labelledby="sponsors-heading">
         <h2 id="sponsors-heading" class="sponsors-title">Auspician estas Jornadas</h2>
@@ -356,13 +396,8 @@
           <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
       </div>
-      <h3 id="modalTitle" class="modal-title">Inscripción Registrada</h3>
-      <p class="modal-text">Su inscripción para las V Jornadas CEMNPA 2026 ha sido procesada exitosamente.</p>
-      
-      <div id="modalSummary" class="modal-summary">
-        <!-- Resumen inyectado dinámicamente -->
-      </div>
-
+      <h3 id="modalTitle" class="modal-title">Inscripción registrada BLOQUE 1</h3>
+      <p class="modal-text">Su confirmación para las V Jornadas CEMNPA 2026 ha sido procesada exitosamente.</p>
       <button type="button" id="modalCloseBtn" class="modal-close-btn">Aceptar</button>
     </div>
   </div>
