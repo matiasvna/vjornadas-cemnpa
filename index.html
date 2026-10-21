@@ -59,8 +59,7 @@
            ==================================================================== -->
       <section class="registration-section" id="formulario-inscripcion" aria-labelledby="form-heading">
         <div class="section-header">
-          <span class="section-tag">Registro Oficial</span>
-          <h2 id="form-heading" class="section-title">Formulario de Inscripción</h2>
+          <h2 id="form-heading" class="section-title">Formulario de confirmación</h2>
           <p class="section-description">Complete los siguientes datos para confirmar su participación en las Jornadas.</p>
         </div>
 
@@ -168,21 +167,42 @@
               <span class="error-message" id="error-email">Por favor, ingrese un correo electrónico válido.</span>
             </div>
 
-            <!-- Lugar de residencia -->
-            <div class="form-group">
-              <label class="form-label" for="residenciaInput">
-                Lugar de residencia <span class="required-mark">*</span>
+            <!-- Provincia y Ciudad -->
+            <div class="form-grid-location">
+              <div class="form-group">
+                <label class="form-label" for="provinciaSelect">
+                  Provincia <span class="required-mark">*</span>
+                </label>
+                <select id="provinciaSelect" name="provincia" class="form-select" required>
+                  <option value="" disabled selected>Seleccione su provincia</option>
+                </select>
+                <span class="error-message" id="error-provincia">Por favor, seleccione su provincia.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ciudadSelect">
+                  Ciudad <span class="required-mark">*</span>
+                </label>
+                <select id="ciudadSelect" name="ciudad" class="form-select" required disabled>
+                  <option value="" disabled selected>Primero seleccione una provincia</option>
+                </select>
+                <span class="error-message" id="error-ciudad">Por favor, seleccione su ciudad o localidad.</span>
+              </div>
+            </div>
+
+            <!-- Campo para especificar otra localidad si selecciona 'Otra localidad' -->
+            <div class="form-group" id="otraCiudadGroup" style="display: none;">
+              <label class="form-label" for="otraCiudadInput">
+                Especifique su ciudad o localidad <span class="required-mark">*</span>
               </label>
               <input 
                 type="text" 
-                id="residenciaInput" 
-                name="residencia" 
+                id="otraCiudadInput" 
+                name="otraCiudad" 
                 class="form-input" 
-                placeholder="Ciudad, Provincia o Localidad" 
-                autocomplete="address-level2" 
-                required
+                placeholder="Ingrese el nombre de su localidad"
               >
-              <span class="error-message" id="error-residencia">Por favor, ingrese su lugar de residencia.</span>
+              <span class="error-message" id="error-otra-ciudad">Por favor, ingrese el nombre de su localidad.</span>
             </div>
 
             <!-- Campo oculto para bloque de interés si se presionó desde tarjeta -->
@@ -192,7 +212,7 @@
             <div class="form-group">
               <button type="submit" id="submitBtn" class="btn-submit">
                 <span class="spinner" aria-hidden="true"></span>
-                <span class="btn-text">Confirmar Inscripción</span>
+                <span class="btn-text">Participaré</span>
               </button>
             </div>
           </div>

@@ -12,6 +12,328 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
+// Dataset de Provincias y Ciudades de Argentina
+const UBICACIONES_ARGENTINA = {
+  "Santa Cruz": [
+    "Río Gallegos",
+    "Caleta Olivia",
+    "El Calafate",
+    "Pico Truncado",
+    "Puerto Deseado",
+    "Las Heras",
+    "Perito Moreno",
+    "Río Turbio",
+    "28 de Noviembre",
+    "Puerto San Julián",
+    "Puerto Santa Cruz",
+    "Comandante Luis Piedrabuena",
+    "Los Antiguos",
+    "Gobernador Gregores",
+    "El Chaltén",
+    "Jaramillo y Fitz Roy",
+    "Lago Posadas",
+    "Koluel Kayke",
+    "Tres Lagos",
+    "Bajo Caracoles",
+    "Otra localidad"
+  ],
+  "Tierra del Fuego, Antártida e Islas del Atlántico Sur": [
+    "Ushuaia",
+    "Río Grande",
+    "Tolhuin",
+    "Otra localidad"
+  ],
+  "Chubut": [
+    "Comodoro Rivadavia",
+    "Trelew",
+    "Puerto Madryn",
+    "Rawson",
+    "Esquel",
+    "Rada Tilly",
+    "Sarmiento",
+    "Trevelin",
+    "Gaiman",
+    "Dolavon",
+    "Lago Puelo",
+    "El Hoyo",
+    "El Maitén",
+    "Epuyén",
+    "Cholila",
+    "Río Mayo",
+    "Otra localidad"
+  ],
+  "Río Negro": [
+    "San Carlos de Bariloche",
+    "General Roca",
+    "Cipolletti",
+    "Viedma",
+    "Villa Regina",
+    "Allen",
+    "Cinco Saltos",
+    "Catriel",
+    "El Bolsón",
+    "Choele Choel",
+    "San Antonio Oeste",
+    "Las Grutas",
+    "Río Colorado",
+    "Ingeniero Jacobacci",
+    "Sierra Grande",
+    "Otra localidad"
+  ],
+  "Neuquén": [
+    "Neuquén Capital",
+    "San Martín de los Andes",
+    "Plottier",
+    "Centenario",
+    "Cutral Có",
+    "Plaza Huincul",
+    "Zapala",
+    "Chos Malal",
+    "Villa La Angostura",
+    "Junín de los Andes",
+    "Rincón de los Sauces",
+    "Añelo",
+    "Otra localidad"
+  ],
+  "Ciudad Autónoma de Buenos Aires (CABA)": [
+    "CABA (Toda la ciudad)",
+    "Comuna 1 (Retiro, San Nicolás, Pto. Madero, San Telmo, Montserrat, Constitución)",
+    "Comuna 2 (Recoleta)",
+    "Comuna 3 (Balvanera, San Cristóbal)",
+    "Comuna 4 (La Boca, Barracas, Parque Patricios, Pompeya)",
+    "Comuna 5 (Almagro, Boedo)",
+    "Comuna 6 (Caballito)",
+    "Comuna 7 (Flores, Parque Chacabuco)",
+    "Comuna 8 (Villa Soldati, Riachuelo, Lugano)",
+    "Comuna 9 (Liniers, Mataderos, Parque Avellaneda)",
+    "Comuna 10 (Villa Real, Monte Castro, Versalles, Floresta, Luro)",
+    "Comuna 11 (Villa Devoto, del Parque, Mitre, Santa Rita)",
+    "Comuna 12 (Coghlan, Saavedra, Urquiza, Pueyrredón)",
+    "Comuna 13 (Núñez, Belgrano, Colegiales)",
+    "Comuna 14 (Palermo)",
+    "Comuna 15 (Chacarita, Villa Crespo, Paternal, Ortúzar, Agronomía)",
+    "Otra localidad"
+  ],
+  "Buenos Aires": [
+    "La Plata",
+    "Mar del Plata",
+    "Bahía Blanca",
+    "Tandil",
+    "Olavarría",
+    "San Nicolás de los Arroyos",
+    "Pergamino",
+    "Junín",
+    "Campana",
+    "Zárate",
+    "Necochea",
+    "Azul",
+    "Mercedes",
+    "Chivilcoy",
+    "Tres Arroyos",
+    "Balcarce",
+    "Gran Buenos Aires (Zona Norte)",
+    "Gran Buenos Aires (Zona Oeste)",
+    "Gran Buenos Aires (Zona Sur)",
+    "Otra localidad"
+  ],
+  "Córdoba": [
+    "Córdoba Capital",
+    "Río Cuarto",
+    "Villa María",
+    "Villa Carlos Paz",
+    "San Francisco",
+    "Alta Gracia",
+    "Río Tercero",
+    "Bell Ville",
+    "La Falda",
+    "Jesús María",
+    "Villa Dolores",
+    "Cruz del Eje",
+    "Marcos Juárez",
+    "Arroyito",
+    "Otra localidad"
+  ],
+  "Santa Fe": [
+    "Rosario",
+    "Santa Fe Capital",
+    "Rafaela",
+    "Venado Tuerto",
+    "Reconquista",
+    "Santo Tomé",
+    "Villa Gobernador Gálvez",
+    "Esperanza",
+    "Granadero Baigorria",
+    "Casilda",
+    "San Lorenzo",
+    "Sunchales",
+    "Otra localidad"
+  ],
+  "Mendoza": [
+    "Mendoza Capital",
+    "San Rafael",
+    "Godoy Cruz",
+    "Guaymallén",
+    "Las Heras",
+    "Maipú",
+    "Luján de Cuyo",
+    "San Martín",
+    "Rivadavia",
+    "Tunuyán",
+    "General Alvear",
+    "Malargüe",
+    "Tupungato",
+    "Otra localidad"
+  ],
+  "Catamarca": [
+    "San Fernando del Valle de Catamarca",
+    "Valle Viejo",
+    "Andalgalá",
+    "Belén",
+    "Santa María",
+    "Tinogasta",
+    "Recreo",
+    "Otra localidad"
+  ],
+  "Chaco": [
+    "Resistencia",
+    "Presidencia Roque Sáenz Peña",
+    "Barranqueras",
+    "Fontana",
+    "Villa Ángela",
+    "Castelli",
+    "Charata",
+    "Quitilipi",
+    "Otra localidad"
+  ],
+  "Corrientes": [
+    "Corrientes Capital",
+    "Goya",
+    "Paso de los Libres",
+    "Curuzú Cuatiá",
+    "Mercedes",
+    "Bella Vista",
+    "Santo Tomé",
+    "Monte Caseros",
+    "Ituzaingó",
+    "Otra localidad"
+  ],
+  "Entre Ríos": [
+    "Paraná",
+    "Concordia",
+    "Gualeguaychú",
+    "Concepción del Uruguay",
+    "Gualeguay",
+    "Villaguay",
+    "Chajarí",
+    "Victoria",
+    "La Paz",
+    "Colón",
+    "Otra localidad"
+  ],
+  "Formosa": [
+    "Formosa Capital",
+    "Clorinda",
+    "Pirané",
+    "El Colorado",
+    "Ingeniero Juárez",
+    "Las Lomitas",
+    "Otra localidad"
+  ],
+  "Jujuy": [
+    "San Salvador de Jujuy",
+    "San Pedro de Jujuy",
+    "Palpalá",
+    "Libertador General San Martín",
+    "Perico",
+    "La Quiaca",
+    "Humahuaca",
+    "Tilcara",
+    "Otra localidad"
+  ],
+  "La Pampa": [
+    "Santa Rosa",
+    "General Pico",
+    "General Acha",
+    "Eduardo Castex",
+    "Realicó",
+    "Intendente Alvear",
+    "25 de Mayo",
+    "Otra localidad"
+  ],
+  "La Rioja": [
+    "La Rioja Capital",
+    "Chilecito",
+    "Chamical",
+    "Aimogasta",
+    "Chepes",
+    "Villa Unión",
+    "Otra localidad"
+  ],
+  "Misiones": [
+    "Posadas",
+    "Oberá",
+    "Eldorado",
+    "Puerto Iguazú",
+    "Apóstoles",
+    "Leandro N. Alem",
+    "San Vicente",
+    "Montecarlo",
+    "Otra localidad"
+  ],
+  "Salta": [
+    "Salta Capital",
+    "San Ramón de la Nueva Orán",
+    "Tartagal",
+    "General Güemes",
+    "San José de Metán",
+    "Rosario de la Frontera",
+    "Cafayate",
+    "Otra localidad"
+  ],
+  "San Juan": [
+    "San Juan Capital",
+    "Rawson",
+    "Chimbas",
+    "Rivadavia",
+    "Santa Lucía",
+    "Pocito",
+    "Caucete",
+    "Jáchal",
+    "Otra localidad"
+  ],
+  "San Luis": [
+    "San Luis Capital",
+    "Villa Mercedes",
+    "Merlo",
+    "La Punta",
+    "Juana Koslay",
+    "Justo Daract",
+    "Otra localidad"
+  ],
+  "Santiago del Estero": [
+    "Santiago del Estero Capital",
+    "La Banda",
+    "Termas de Río Hondo",
+    "Frías",
+    "Añatuya",
+    "Fernández",
+    "Otra localidad"
+  ],
+  "Tucumán": [
+    "San Miguel de Tucumán",
+    "Banda del Río Salí",
+    "Yerba Buena",
+    "Villa Carmela",
+    "Concepción",
+    "Tafí Viejo",
+    "Aguilares",
+    "Famaillá",
+    "Monteros",
+    "Tafí del Valle",
+    "Otra localidad"
+  ]
+};
+
 // Estado de inicialización de Firebase
 let db = null;
 let firebaseInitialized = false;
@@ -32,7 +354,7 @@ try {
 }
 
 /**
- * Función requerida para guardar el objeto de inscripción en la colección "inscripciones" de Firebase Firestore.
+ * Guarda el objeto de inscripción en la colección "inscripciones" de Firebase Firestore.
  * @param {Object} datosInscripcion - Objeto con los datos del participante
  * @returns {Promise<string>} - ID del documento generado en Firestore
  */
@@ -45,9 +367,8 @@ export async function guardarInscripcion(datosInscripcion) {
     });
     return docRef.id;
   } else {
-    // Simulación controlada para pruebas locales previas a la inserción de claves
-    console.info("[CEMNPA Demo] Guardando inscripción localmente:", datosInscripcion);
-    const mockId = "DEMO-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    console.info("[CEMNPA Demo] Guardando confirmación localmente:", datosInscripcion);
+    const mockId = "CONF-" + Math.random().toString(36).substring(2, 10).toUpperCase();
     const inscripcionesPrevias = JSON.parse(localStorage.getItem("cemnpa_inscripciones") || "[]");
     inscripcionesPrevias.push({
       id: mockId,
@@ -59,7 +380,7 @@ export async function guardarInscripcion(datosInscripcion) {
   }
 }
 
-// Elementos del DOM
+// Elementos del DOM e inicialización
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registrationForm");
   const submitBtn = document.getElementById("submitBtn");
@@ -76,14 +397,74 @@ document.addEventListener("DOMContentLoaded", () => {
   const apellidoInput = document.getElementById("apellidoInput");
   const profesionSelect = document.getElementById("profesionSelect");
   const emailInput = document.getElementById("emailInput");
-  const residenciaInput = document.getElementById("residenciaInput");
+
+  // Selectores dependientes de Provincia y Ciudad
+  const provinciaSelect = document.getElementById("provinciaSelect");
+  const ciudadSelect = document.getElementById("ciudadSelect");
+  const otraCiudadGroup = document.getElementById("otraCiudadGroup");
+  const otraCiudadInput = document.getElementById("otraCiudadInput");
 
   // Modal de confirmación
   const confirmationModal = document.getElementById("confirmationModal");
   const modalSummary = document.getElementById("modalSummary");
   const modalCloseBtn = document.getElementById("modalCloseBtn");
 
-  // 1. Manejo visual de radio buttons de modalidad
+  // 1. Cargar Provincias en el dropdown
+  cargarProvincias();
+
+  function cargarProvincias() {
+    const provincias = Object.keys(UBICACIONES_ARGENTINA).sort((a, b) => {
+      // Priorizar Santa Cruz primera por ser sede provincial del evento
+      if (a === "Santa Cruz") return -1;
+      if (b === "Santa Cruz") return 1;
+      return a.localeCompare(b, "es");
+    });
+
+    provincias.forEach(prov => {
+      const option = document.createElement("option");
+      option.value = prov;
+      option.textContent = prov;
+      provinciaSelect.appendChild(option);
+    });
+  }
+
+  // Cambio de Provincia -> Cargar Ciudades
+  provinciaSelect.addEventListener("change", () => {
+    const provSeleccionada = provinciaSelect.value;
+    clearError("provincia");
+
+    ciudadSelect.innerHTML = '<option value="" disabled selected>Seleccione su ciudad o localidad</option>';
+    ciudadSelect.disabled = false;
+    otraCiudadGroup.style.display = "none";
+    otraCiudadInput.value = "";
+    clearError("ciudad");
+    clearError("otra-ciudad");
+
+    const ciudades = UBICACIONES_ARGENTINA[provSeleccionada] || ["Otra localidad"];
+    ciudades.forEach(ciudad => {
+      const option = document.createElement("option");
+      option.value = ciudad;
+      option.textContent = ciudad;
+      ciudadSelect.appendChild(option);
+    });
+  });
+
+  // Cambio de Ciudad -> Mostrar input si elige 'Otra localidad'
+  ciudadSelect.addEventListener("change", () => {
+    clearError("ciudad");
+    if (ciudadSelect.value === "Otra localidad") {
+      otraCiudadGroup.style.display = "block";
+      otraCiudadInput.focus();
+    } else {
+      otraCiudadGroup.style.display = "none";
+      otraCiudadInput.value = "";
+      clearError("otra-ciudad");
+    }
+  });
+
+  otraCiudadInput.addEventListener("input", () => clearError("otra-ciudad"));
+
+  // 2. Manejo visual de radio buttons de modalidad
   modalidadRadios.forEach(radio => {
     radio.addEventListener("change", () => {
       modalidadCards.forEach(card => card.classList.remove("is-selected"));
@@ -94,14 +475,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 2. Limpieza de errores en tiempo real al escribir
+  // 3. Limpieza de errores en tiempo real
   nombreInput.addEventListener("input", () => clearError("nombre"));
   apellidoInput.addEventListener("input", () => clearError("apellido"));
   profesionSelect.addEventListener("change", () => clearError("profesion"));
   emailInput.addEventListener("input", () => clearError("email"));
-  residenciaInput.addEventListener("input", () => clearError("residencia"));
 
-  // 3. Botones "Inscribirse a este bloque"
+  // 4. Botones "Inscribirse a este bloque"
   const blockButtons = document.querySelectorAll(".btn-block-action");
   blockButtons.forEach(button => {
     button.addEventListener("click", () => {
@@ -110,7 +490,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Restablecer selección de bloque
   resetBlockBtn.addEventListener("click", () => {
     bloqueInteresInput.value = "";
     selectedBlockBanner.classList.remove("active");
@@ -118,20 +497,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function seleccionarBloque(blockTitle) {
     bloqueInteresInput.value = blockTitle;
-    selectedBlockText.textContent = `Inscripción específica: ${blockTitle}`;
+    selectedBlockText.textContent = `Confirmación específica: ${blockTitle}`;
     selectedBlockBanner.classList.add("active");
 
     const formSection = document.getElementById("formulario-inscripcion");
     formSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    // Foco en la primera opción de modalidad para accesibilidad
     const firstRadio = document.getElementById("modalidad-virtual");
     if (firstRadio) {
       firstRadio.focus();
     }
   }
 
-  // 4. Validaciones de formulario
+  // 5. Validaciones de formulario
   function validarFormulario() {
     let isValid = true;
 
@@ -177,12 +555,30 @@ document.addEventListener("DOMContentLoaded", () => {
       clearError("email");
     }
 
-    // Lugar de residencia
-    if (!residenciaInput.value.trim() || residenciaInput.value.trim().length < 2) {
-      showError("residencia", "Por favor, ingrese su lugar de residencia.");
+    // Provincia
+    if (!provinciaSelect.value) {
+      showError("provincia", "Por favor, seleccione su provincia.");
       isValid = false;
     } else {
-      clearError("residencia");
+      clearError("provincia");
+    }
+
+    // Ciudad
+    if (!ciudadSelect.value) {
+      showError("ciudad", "Por favor, seleccione su ciudad o localidad.");
+      isValid = false;
+    } else {
+      clearError("ciudad");
+    }
+
+    // Si eligió 'Otra localidad', validar campo de texto
+    if (ciudadSelect.value === "Otra localidad") {
+      if (!otraCiudadInput.value.trim() || otraCiudadInput.value.trim().length < 2) {
+        showError("otra-ciudad", "Por favor, especifique el nombre de su localidad.");
+        isValid = false;
+      } else {
+        clearError("otra-ciudad");
+      }
     }
 
     return isValid;
@@ -211,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 5. Envío de Formulario
+  // 6. Envío de Formulario
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     hideAlert();
@@ -222,13 +618,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const modalidadSeleccionada = document.querySelector('input[name="modalidad"]:checked').value;
+    const ciudadFinal = ciudadSelect.value === "Otra localidad" 
+      ? otraCiudadInput.value.trim() 
+      : ciudadSelect.value;
+
     const datosInscripcion = {
       modalidadAsistencia: modalidadSeleccionada,
       nombre: nombreInput.value.trim(),
       apellido: apellidoInput.value.trim(),
       profesionOcupacion: profesionSelect.value,
       correoElectronico: emailInput.value.trim().toLowerCase(),
-      lugarResidencia: residenciaInput.value.trim(),
+      provincia: provinciaSelect.value,
+      ciudad: ciudadFinal,
       bloqueInteres: bloqueInteresInput.value || "Todas las Jornadas"
     };
 
@@ -242,13 +643,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Limpiar formulario
       form.reset();
+      ciudadSelect.innerHTML = '<option value="" disabled selected>Primero seleccione una provincia</option>';
+      ciudadSelect.disabled = true;
+      otraCiudadGroup.style.display = "none";
       modalidadCards.forEach(card => card.classList.remove("is-selected"));
       bloqueInteresInput.value = "";
       selectedBlockBanner.classList.remove("active");
     } catch (error) {
-      console.error("[CEMNPA] Error al registrar la inscripción:", error);
+      console.error("[CEMNPA] Error al registrar la confirmación:", error);
       showAlert(
-        "Ocurrió un error al procesar su inscripción. Por favor, verifique su conexión e intente nuevamente.",
+        "Ocurrió un error al procesar su confirmación. Por favor, verifique su conexión e intente nuevamente.",
         "error"
       );
     } finally {
@@ -260,11 +664,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isLoading) {
       submitBtn.classList.add("loading");
       submitBtn.disabled = true;
-      submitBtn.querySelector(".btn-text").textContent = "Procesando inscripción...";
+      submitBtn.querySelector(".btn-text").textContent = "Procesando confirmación...";
     } else {
       submitBtn.classList.remove("loading");
       submitBtn.disabled = false;
-      submitBtn.querySelector(".btn-text").textContent = "Confirmar Inscripción";
+      submitBtn.querySelector(".btn-text").textContent = "Participaré";
     }
   }
 
@@ -285,7 +689,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <p><strong>Modalidad:</strong> ${datos.modalidadAsistencia}</p>
       <p><strong>Profesión / Ocupación:</strong> ${datos.profesionOcupacion}</p>
       <p><strong>Correo electrónico:</strong> ${datos.correoElectronico}</p>
-      <p><strong>Lugar de residencia:</strong> ${datos.lugarResidencia}</p>
+      <p><strong>Provincia:</strong> ${datos.provincia}</p>
+      <p><strong>Ciudad / Localidad:</strong> ${datos.ciudad}</p>
       <p><strong>Participación:</strong> ${datos.bloqueInteres}</p>
     `;
     confirmationModal.classList.add("active");
@@ -295,7 +700,6 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmationModal.classList.remove("active");
   });
 
-  // Cerrar modal al hacer clic en el fondo
   confirmationModal.addEventListener("click", (e) => {
     if (e.target === confirmationModal) {
       confirmationModal.classList.remove("active");

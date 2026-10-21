@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /inscripciones/{document} {
+      // Permite registrar la confirmación/inscripción a cualquier visitante
+      allow create: if request.resource.data.modalidadAsistencia in ['Virtual', 'Presencial', 'Ambas']
+                    && request.resource.data.nombre is string
+                    && request.resource.data.apellido is string
+                    && request.resource.data.correoElectronico is string
+                    && request.resource.data.provincia is string
+                    && request.resource.data.ciudad is string;
+      
+      // Protege los datos personales: nadie puede leer, listar o borrar registros ajenos
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}

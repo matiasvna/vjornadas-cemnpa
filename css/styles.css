@@ -813,6 +813,12 @@ body {
   background-color: #1b2f5d;
 }
 
+.form-grid-location {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
 /* ==========================================================================
    Responsividad & Tablets/Desktops (Mobile-First Upward)
    ========================================================================== */
@@ -821,7 +827,8 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .form-grid-names {
+  .form-grid-names,
+  .form-grid-location {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
