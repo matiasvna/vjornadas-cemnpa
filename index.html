@@ -15,6 +15,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
 
+  <!-- Favicon oficial como ícono de pestaña -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
   <!-- Estilos Institucionales (Mobile-First, Sin Dark Mode) -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -53,12 +57,36 @@
           <strong>Las Jornadas proponen distintos momentos temáticos</strong>, para que puedas organizarte y participar
           en aquellos que más te interesen. Hoy te presentamos los tres primeros bloques.
         </p>
-      </div>
-    </header>
-
-    <main>
+      </div>    <main>
       <!-- ====================================================================
-           1. BLOQUES TEMÁTICOS (PRESENTACIÓN Y SELECCIÓN)
+           1. FORMULARIO DE CONFIRMACIÓN (ARRIBA)
+           ==================================================================== -->
+      <section class="registration-section" id="formulario-inscripcion" aria-labelledby="form-heading">
+        <div class="section-header">
+          <h2 id="form-heading" class="section-title">Formulario de confirmación</h2>
+          <p class="section-description">
+            Para acompañar una mejor organización del encuentro, te invitamos a indicarnos en cuáles momentos temáticos
+            te gustaría participar.
+          </p>
+        </div>
+
+        <form id="registrationForm" novalidate onsubmit="return false;">
+          <div class="form-group">
+            <label class="form-label" for="nombreApellidoInput">
+              Nombre y apellido: <span class="required-mark">*</span>
+            </label>
+            <input type="text" id="nombreApellidoInput" name="nombreApellido" class="form-input"
+              placeholder="Ingrese su nombre y apellido" autocomplete="name" required>
+            <span class="error-message" id="error-nombre-apellido">Por favor, ingrese su nombre y apellido.</span>
+          </div>
+
+          <!-- Alerta de estado global -->
+          <div id="formAlert" class="form-alert" role="alert" aria-live="assertive"></div>
+        </form>
+      </section>
+
+      <!-- ====================================================================
+           2. BLOQUES TEMÁTICOS (ABAJO: INSCRIPCIÓN DIRECTA POR BLOQUE)
            ==================================================================== -->
       <section class="blocks-section" aria-labelledby="blocks-heading">
         <div class="blocks-section-header">
@@ -67,7 +95,7 @@
 
         <div class="blocks-grid">
           <!-- Tarjeta 1 (Color de acento #168ab8) -->
-          <article class="block-card block-card-1">
+          <article class="block-card block-card-1" id="block-card-1">
             <div class="block-card-body">
               <span class="block-tag">Bloque 1</span>
               <h3 class="block-title">Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región</h3>
@@ -84,16 +112,64 @@
                 Jueves 5 de noviembre · 9:00 a 12:00 h · Auditorio OSDE
               </div>
 
-              <button type="button" class="btn-block-action"
-                data-block-id="Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región"
-                data-block-name="bloque 1" data-checkbox-id="interes-bloque-1">
-                ¡Me interesa!
-              </button>
+              <!-- Zona interactiva de inscripción en Bloque 1 -->
+              <div class="block-action-container" id="block-action-1">
+                <!-- Botón ¡Me interesa! inicial -->
+                <button type="button" class="btn-block-action" id="btn-interesa-1" data-block="1">
+                  ¡Me interesa!
+                </button>
+
+                <!-- Panel de selección de modalidad (Presencial o Virtual) -->
+                <div class="block-modality-panel" id="modality-panel-1" style="display: none;">
+                  <div class="block-modality-header">
+                    <span class="block-modality-title">Modalidad de participación</span>
+                  </div>
+                  <div class="block-modality-options" role="radiogroup" aria-label="Modalidad Bloque 1">
+                    <label class="block-modality-choice" for="mod-1-presencial">
+                      <input type="radio" id="mod-1-presencial" name="modalidad-bloque-1" value="Presencial">
+                      <span class="block-modality-indicator" aria-hidden="true"></span>
+                      <span class="block-modality-text">Presencial</span>
+                    </label>
+
+                    <label class="block-modality-choice" for="mod-1-virtual">
+                      <input type="radio" id="mod-1-virtual" name="modalidad-bloque-1" value="Virtual">
+                      <span class="block-modality-indicator" aria-hidden="true"></span>
+                      <span class="block-modality-text">Virtual</span>
+                    </label>
+                  </div>
+
+                  <!-- Botones de Confirmar y Cancelar lado a lado -->
+                  <div class="block-buttons-row">
+                    <button type="button" class="btn-block-confirm" id="btn-confirmar-1" data-block="1">
+                      <span class="spinner-small" aria-hidden="true"></span>
+                      <span class="btn-text">Confirmar</span>
+                    </button>
+                    <button type="button" class="btn-block-cancel" id="btn-cancelar-1" data-block="1">
+                      Cancelar
+                    </button>
+                  </div>
+
+                  <span class="error-message block-error" id="error-bloque-1"></span>
+                </div>
+
+                <!-- Panel de confirmación activa (con botón para cancelar confirmación) -->
+                <div class="block-confirmed-panel" id="confirmed-panel-1" style="display: none;">
+                  <div class="block-confirmed-badge">
+                    <span class="confirmed-check-icon" aria-hidden="true">✓</span>
+                    <span class="confirmed-status-text">
+                      Participación confirmada: <strong id="confirmed-modality-1">Presencial</strong>
+                    </span>
+                  </div>
+                  <button type="button" class="btn-block-cancel-confirm" id="btn-cancelar-confirm-1" data-block="1">
+                    Cancelar confirmación
+                  </button>
+                </div>
+              </div>
             </div>
           </article>
 
           <!-- Tarjeta 2 (Color de acento #236fa1) -->
-          <article class="block-card block-card-2">
+          <article class="block-card block-card-2" id="block-card-2">
             <div class="block-card-body">
               <span class="block-tag">Bloque 2</span>
               <h3 class="block-title">Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias</h3>
@@ -110,16 +186,64 @@
                 Jueves 5 de noviembre · 14:00 a 18:00 h · Auditorio OSDE
               </div>
 
-              <button type="button" class="btn-block-action"
-                data-block-id="Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias"
-                data-block-name="bloque 2" data-checkbox-id="interes-bloque-2">
-                ¡Me interesa!
-              </button>
+              <!-- Zona interactiva de inscripción en Bloque 2 -->
+              <div class="block-action-container" id="block-action-2">
+                <!-- Botón ¡Me interesa! inicial -->
+                <button type="button" class="btn-block-action" id="btn-interesa-2" data-block="2">
+                  ¡Me interesa!
+                </button>
+
+                <!-- Panel de selección de modalidad (Presencial o Virtual) -->
+                <div class="block-modality-panel" id="modality-panel-2" style="display: none;">
+                  <div class="block-modality-header">
+                    <span class="block-modality-title">Modalidad de participación</span>
+                  </div>
+                  <div class="block-modality-options" role="radiogroup" aria-label="Modalidad Bloque 2">
+                    <label class="block-modality-choice" for="mod-2-presencial">
+                      <input type="radio" id="mod-2-presencial" name="modalidad-bloque-2" value="Presencial">
+                      <span class="block-modality-indicator" aria-hidden="true"></span>
+                      <span class="block-modality-text">Presencial</span>
+                    </label>
+
+                    <label class="block-modality-choice" for="mod-2-virtual">
+                      <input type="radio" id="mod-2-virtual" name="modalidad-bloque-2" value="Virtual">
+                      <span class="block-modality-indicator" aria-hidden="true"></span>
+                      <span class="block-modality-text">Virtual</span>
+                    </label>
+                  </div>
+
+                  <!-- Botones de Confirmar y Cancelar lado a lado -->
+                  <div class="block-buttons-row">
+                    <button type="button" class="btn-block-confirm" id="btn-confirmar-2" data-block="2">
+                      <span class="spinner-small" aria-hidden="true"></span>
+                      <span class="btn-text">Confirmar</span>
+                    </button>
+                    <button type="button" class="btn-block-cancel" id="btn-cancelar-2" data-block="2">
+                      Cancelar
+                    </button>
+                  </div>
+
+                  <span class="error-message block-error" id="error-bloque-2"></span>
+                </div>
+
+                <!-- Panel de confirmación activa (con botón para cancelar confirmación) -->
+                <div class="block-confirmed-panel" id="confirmed-panel-2" style="display: none;">
+                  <div class="block-confirmed-badge">
+                    <span class="confirmed-check-icon" aria-hidden="true">✓</span>
+                    <span class="confirmed-status-text">
+                      Participación confirmada: <strong id="confirmed-modality-2">Presencial</strong>
+                    </span>
+                  </div>
+                  <button type="button" class="btn-block-cancel-confirm" id="btn-cancelar-confirm-2" data-block="2">
+                    Cancelar confirmación
+                  </button>
+                </div>
+              </div>
             </div>
           </article>
 
           <!-- Tarjeta 3 (Color de acento #268f83) -->
-          <article class="block-card block-card-3">
+          <article class="block-card block-card-3" id="block-card-3">
             <div class="block-card-body">
               <span class="block-tag">Bloque 3</span>
               <h3 class="block-title">Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad</h3>
@@ -136,197 +260,62 @@
                 Viernes 6 de noviembre · 9:00 a 12:00 h · Auditorio OSDE
               </div>
 
-              <button type="button" class="btn-block-action"
-                data-block-id="Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad"
-                data-block-name="bloque 3" data-checkbox-id="interes-bloque-3">
-                ¡Me interesa!
-              </button>
+              <!-- Zona interactiva de inscripción en Bloque 3 -->
+              <div class="block-action-container" id="block-action-3">
+                <!-- Botón ¡Me interesa! inicial -->
+                <button type="button" class="btn-block-action" id="btn-interesa-3" data-block="3">
+                  ¡Me interesa!
+                </button>
+
+                <!-- Panel de selección de modalidad (Presencial o Virtual) -->
+                <div class="block-modality-panel" id="modality-panel-3" style="display: none;">
+                  <div class="block-modality-header">
+                    <span class="block-modality-title">Modalidad de participación</span>
+                  </div>
+                  <div class="block-modality-options" role="radiogroup" aria-label="Modalidad Bloque 3">
+                    <label class="block-modality-choice" for="mod-3-presencial">
+                      <input type="radio" id="mod-3-presencial" name="modalidad-bloque-3" value="Presencial">
+                      <span class="block-modality-indicator" aria-hidden="true"></span>
+                      <span class="block-modality-text">Presencial</span>
+                    </label>
+
+                    <label class="block-modality-choice" for="mod-3-virtual">
+                      <input type="radio" id="mod-3-virtual" name="modalidad-bloque-3" value="Virtual">
+                      <span class="block-modality-indicator" aria-hidden="true"></span>
+                      <span class="block-modality-text">Virtual</span>
+                    </label>
+                  </div>
+
+                  <!-- Botones de Confirmar y Cancelar lado a lado -->
+                  <div class="block-buttons-row">
+                    <button type="button" class="btn-block-confirm" id="btn-confirmar-3" data-block="3">
+                      <span class="spinner-small" aria-hidden="true"></span>
+                      <span class="btn-text">Confirmar</span>
+                    </button>
+                    <button type="button" class="btn-block-cancel" id="btn-cancelar-3" data-block="3">
+                      Cancelar
+                    </button>
+                  </div>
+
+                  <span class="error-message block-error" id="error-bloque-3"></span>
+                </div>
+
+                <!-- Panel de confirmación activa (con botón para cancelar confirmación) -->
+                <div class="block-confirmed-panel" id="confirmed-panel-3" style="display: none;">
+                  <div class="block-confirmed-badge">
+                    <span class="confirmed-check-icon" aria-hidden="true">✓</span>
+                    <span class="confirmed-status-text">
+                      Participación confirmada: <strong id="confirmed-modality-3">Presencial</strong>
+                    </span>
+                  </div>
+                  <button type="button" class="btn-block-cancel-confirm" id="btn-cancelar-confirm-3" data-block="3">
+                    Cancelar confirmación
+                  </button>
+                </div>
+              </div>
             </div>
           </article>
         </div>
-      </section>
-
-      <!-- ====================================================================
-           2. FORMULARIO DE CONFIRMACIÓN (ABAJO, RECIBE EL DESPLAZAMIENTO)
-           ==================================================================== -->
-      <section class="registration-section" id="formulario-inscripcion" aria-labelledby="form-heading">
-        <div class="section-header">
-          <h2 id="form-heading" class="section-title">Formulario de confirmación</h2>
-          <p class="section-description">
-            Para acompañar una mejor organización del encuentro, te invitamos a indicarnos en cuáles momentos temáticos
-            te gustaría participar.
-          </p>
-        </div>
-
-        <!-- Indicador contextual si el usuario seleccionó un bloque específico -->
-        <div id="selectedBlockBanner" class="selected-block-banner" role="status" aria-live="polite">
-          <span id="selectedBlockText">Participaré del bloque 1</span>
-          <button type="button" id="resetBlockBtn" class="selected-block-reset">Quitar selección</button>
-        </div>
-
-        <form id="registrationForm" novalidate>
-          <div class="form-grid">
-            <!-- Modalidad de asistencia (Desplegable o Radio Buttons OBLIGATORIOS como primer campo) -->
-            <div class="form-group">
-              <label class="form-label" id="modalidadLabel">
-                Modalidad de asistencia <span class="required-mark">*</span>
-              </label>
-              <div class="modality-options" role="radiogroup" aria-labelledby="modalidadLabel" id="modalidadGroup">
-                <label class="modality-card" for="modalidad-virtual">
-                  <input type="radio" id="modalidad-virtual" name="modalidad" value="Virtual" required>
-                  <span class="modality-indicator" aria-hidden="true"></span>
-                  <span class="modality-text">Virtual</span>
-                </label>
-
-                <label class="modality-card" for="modalidad-presencial">
-                  <input type="radio" id="modalidad-presencial" name="modalidad" value="Presencial" required>
-                  <span class="modality-indicator" aria-hidden="true"></span>
-                  <span class="modality-text">Presencial</span>
-                </label>
-
-                <label class="modality-card" for="modalidad-ambas">
-                  <input type="radio" id="modalidad-ambas" name="modalidad" value="Ambas" required>
-                  <span class="modality-indicator" aria-hidden="true"></span>
-                  <span class="modality-text">Ambas</span>
-                </label>
-              </div>
-              <span class="error-message" id="error-modalidad">Por favor, seleccione una modalidad de asistencia.</span>
-            </div>
-
-            <!-- Nombre y Apellido -->
-            <div class="form-grid-names">
-              <div class="form-group">
-                <label class="form-label" for="nombreInput">
-                  Nombre <span class="required-mark">*</span>
-                </label>
-                <input type="text" id="nombreInput" name="nombre" class="form-input" placeholder="Ingrese su nombre"
-                  autocomplete="given-name" required>
-                <span class="error-message" id="error-nombre">Por favor, ingrese su nombre.</span>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="apellidoInput">
-                  Apellido <span class="required-mark">*</span>
-                </label>
-                <input type="text" id="apellidoInput" name="apellido" class="form-input"
-                  placeholder="Ingrese su apellido" autocomplete="family-name" required>
-                <span class="error-message" id="error-apellido">Por favor, ingrese su apellido.</span>
-              </div>
-            </div>
-
-            <!-- Profesión / Ocupación -->
-            <div class="form-group">
-              <label class="form-label" for="profesionSelect">
-                Profesión / Ocupación <span class="required-mark">*</span>
-              </label>
-              <select id="profesionSelect" name="profesion" class="form-select" required>
-                <option value="" disabled selected>Seleccione su profesión u ocupación</option>
-                <option value="Profesional de la salud">Profesional de la salud</option>
-                <option value="Estudiante">Estudiante</option>
-                <option value="Gestor/Institución">Gestor/Institución</option>
-                <option value="Residente">Residente</option>
-                <option value="Investigador">Investigador</option>
-                <option value="Solo por información">Solo por información</option>
-              </select>
-              <span class="error-message" id="error-profesion">Por favor, seleccione su profesión u ocupación.</span>
-            </div>
-
-            <!-- Correo electrónico -->
-            <div class="form-group">
-              <label class="form-label" for="emailInput">
-                Correo electrónico <span class="required-mark">*</span>
-              </label>
-              <input type="email" id="emailInput" name="email" class="form-input" placeholder="ejemplo@correo.com"
-                autocomplete="email" required>
-              <span class="error-message" id="error-email">Por favor, ingrese un correo electrónico válido.</span>
-            </div>
-
-            <!-- Provincia y Ciudad -->
-            <div class="form-grid-location">
-              <div class="form-group">
-                <label class="form-label" for="provinciaSelect">
-                  Provincia <span class="required-mark">*</span>
-                </label>
-                <select id="provinciaSelect" name="provincia" class="form-select" required>
-                  <option value="" disabled selected>Seleccione su provincia</option>
-                </select>
-                <span class="error-message" id="error-provincia">Por favor, seleccione su provincia.</span>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="ciudadSelect">
-                  Ciudad <span class="required-mark">*</span>
-                </label>
-                <select id="ciudadSelect" name="ciudad" class="form-select" required disabled>
-                  <option value="" disabled selected>Primero seleccione una provincia</option>
-                </select>
-                <span class="error-message" id="error-ciudad">Por favor, seleccione su ciudad o localidad.</span>
-              </div>
-            </div>
-
-            <!-- Campo para especificar otra localidad si selecciona 'Otra localidad' -->
-            <div class="form-group" id="otraCiudadGroup" style="display: none;">
-              <label class="form-label" for="otraCiudadInput">
-                Especifique su ciudad o localidad <span class="required-mark">*</span>
-              </label>
-              <input type="text" id="otraCiudadInput" name="otraCiudad" class="form-input"
-                placeholder="Ingrese el nombre de su localidad">
-              <span class="error-message" id="error-otra-ciudad">Por favor, ingrese el nombre de su localidad.</span>
-            </div>
-
-            <!-- Momentos temáticos de interés (Opcional - Selección múltiple) -->
-            <div class="form-group">
-              <label class="form-label" id="bloquesInteresLabel">
-                Momentos temáticos de interés <span class="optional-mark">(Opcional)</span>
-              </label>
-              <div class="blocks-interest-options" role="group" aria-labelledby="bloquesInteresLabel">
-                <label class="block-interest-card" for="interes-bloque-1">
-                  <input type="checkbox" id="interes-bloque-1" name="bloquesInteres"
-                    value="Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región">
-                  <span class="block-interest-check" aria-hidden="true"></span>
-                  <div class="block-interest-info">
-                    <span class="block-interest-title">Bloque 1: Tecnologías, especialidades y capacidades instaladas en
-                      la región</span>
-                    <span class="block-interest-date">Jueves 5 de noviembre · 9:00 a 12:00 h · Auditorio OSDE</span>
-                  </div>
-                </label>
-
-                <label class="block-interest-card" for="interes-bloque-2">
-                  <input type="checkbox" id="interes-bloque-2" name="bloquesInteres"
-                    value="Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias">
-                  <span class="block-interest-check" aria-hidden="true"></span>
-                  <div class="block-interest-info">
-                    <span class="block-interest-title">Bloque 2: Investigación aplicada, seguridad y decisiones
-                      interdisciplinarias</span>
-                    <span class="block-interest-date">Jueves 5 de noviembre · 14:00 a 18:00 h · Auditorio OSDE</span>
-                  </div>
-                </label>
-
-                <label class="block-interest-card" for="interes-bloque-3">
-                  <input type="checkbox" id="interes-bloque-3" name="bloquesInteres"
-                    value="Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad">
-                  <span class="block-interest-check" aria-hidden="true"></span>
-                  <div class="block-interest-info">
-                    <span class="block-interest-title">Bloque 3: Cuidado integral: anticipación, acompañamiento y
-                      continuidad</span>
-                    <span class="block-interest-date">Viernes 6 de noviembre · 9:00 a 12:00 h · Auditorio OSDE</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Botón de Envío -->
-            <div class="form-group">
-              <button type="submit" id="submitBtn" class="btn-submit">
-                <span class="spinner" aria-hidden="true"></span>
-                <span class="btn-text">Participaré</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Alerta de estado -->
-          <div id="formAlert" class="form-alert" role="alert" aria-live="assertive"></div>
-        </form>
       </section>
 
       <!-- ====================================================================

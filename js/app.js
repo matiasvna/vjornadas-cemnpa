@@ -1,5 +1,6 @@
 /**
  * V Jornadas CEMNPA 2026 - Lógica de Registro y Firebase Firestore
+ * Confirmación por Bloques Temáticos (Presencial o Virtual)
  * Arquitectura: ES Modules Moderno, Mobile-First
  */
 
@@ -8,330 +9,17 @@ import {
   getFirestore, 
   collection, 
   addDoc, 
+  deleteDoc,
+  doc,
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
-// Dataset de Provincias y Ciudades de Argentina
-const UBICACIONES_ARGENTINA = {
-  "Santa Cruz": [
-    "Río Gallegos",
-    "Caleta Olivia",
-    "El Calafate",
-    "Pico Truncado",
-    "Puerto Deseado",
-    "Las Heras",
-    "Perito Moreno",
-    "Río Turbio",
-    "28 de Noviembre",
-    "Puerto San Julián",
-    "Puerto Santa Cruz",
-    "Comandante Luis Piedrabuena",
-    "Los Antiguos",
-    "Gobernador Gregores",
-    "El Chaltén",
-    "Jaramillo y Fitz Roy",
-    "Lago Posadas",
-    "Koluel Kayke",
-    "Tres Lagos",
-    "Bajo Caracoles",
-    "Otra localidad"
-  ],
-  "Tierra del Fuego, Antártida e Islas del Atlántico Sur": [
-    "Ushuaia",
-    "Río Grande",
-    "Tolhuin",
-    "Otra localidad"
-  ],
-  "Chubut": [
-    "Comodoro Rivadavia",
-    "Trelew",
-    "Puerto Madryn",
-    "Rawson",
-    "Esquel",
-    "Rada Tilly",
-    "Sarmiento",
-    "Trevelin",
-    "Gaiman",
-    "Dolavon",
-    "Lago Puelo",
-    "El Hoyo",
-    "El Maitén",
-    "Epuyén",
-    "Cholila",
-    "Río Mayo",
-    "Otra localidad"
-  ],
-  "Río Negro": [
-    "San Carlos de Bariloche",
-    "General Roca",
-    "Cipolletti",
-    "Viedma",
-    "Villa Regina",
-    "Allen",
-    "Cinco Saltos",
-    "Catriel",
-    "El Bolsón",
-    "Choele Choel",
-    "San Antonio Oeste",
-    "Las Grutas",
-    "Río Colorado",
-    "Ingeniero Jacobacci",
-    "Sierra Grande",
-    "Otra localidad"
-  ],
-  "Neuquén": [
-    "Neuquén Capital",
-    "San Martín de los Andes",
-    "Plottier",
-    "Centenario",
-    "Cutral Có",
-    "Plaza Huincul",
-    "Zapala",
-    "Chos Malal",
-    "Villa La Angostura",
-    "Junín de los Andes",
-    "Rincón de los Sauces",
-    "Añelo",
-    "Otra localidad"
-  ],
-  "Ciudad Autónoma de Buenos Aires (CABA)": [
-    "CABA (Toda la ciudad)",
-    "Comuna 1 (Retiro, San Nicolás, Pto. Madero, San Telmo, Montserrat, Constitución)",
-    "Comuna 2 (Recoleta)",
-    "Comuna 3 (Balvanera, San Cristóbal)",
-    "Comuna 4 (La Boca, Barracas, Parque Patricios, Pompeya)",
-    "Comuna 5 (Almagro, Boedo)",
-    "Comuna 6 (Caballito)",
-    "Comuna 7 (Flores, Parque Chacabuco)",
-    "Comuna 8 (Villa Soldati, Riachuelo, Lugano)",
-    "Comuna 9 (Liniers, Mataderos, Parque Avellaneda)",
-    "Comuna 10 (Villa Real, Monte Castro, Versalles, Floresta, Luro)",
-    "Comuna 11 (Villa Devoto, del Parque, Mitre, Santa Rita)",
-    "Comuna 12 (Coghlan, Saavedra, Urquiza, Pueyrredón)",
-    "Comuna 13 (Núñez, Belgrano, Colegiales)",
-    "Comuna 14 (Palermo)",
-    "Comuna 15 (Chacarita, Villa Crespo, Paternal, Ortúzar, Agronomía)",
-    "Otra localidad"
-  ],
-  "Buenos Aires": [
-    "La Plata",
-    "Mar del Plata",
-    "Bahía Blanca",
-    "Tandil",
-    "Olavarría",
-    "San Nicolás de los Arroyos",
-    "Pergamino",
-    "Junín",
-    "Campana",
-    "Zárate",
-    "Necochea",
-    "Azul",
-    "Mercedes",
-    "Chivilcoy",
-    "Tres Arroyos",
-    "Balcarce",
-    "Gran Buenos Aires (Zona Norte)",
-    "Gran Buenos Aires (Zona Oeste)",
-    "Gran Buenos Aires (Zona Sur)",
-    "Otra localidad"
-  ],
-  "Córdoba": [
-    "Córdoba Capital",
-    "Río Cuarto",
-    "Villa María",
-    "Villa Carlos Paz",
-    "San Francisco",
-    "Alta Gracia",
-    "Río Tercero",
-    "Bell Ville",
-    "La Falda",
-    "Jesús María",
-    "Villa Dolores",
-    "Cruz del Eje",
-    "Marcos Juárez",
-    "Arroyito",
-    "Otra localidad"
-  ],
-  "Santa Fe": [
-    "Rosario",
-    "Santa Fe Capital",
-    "Rafaela",
-    "Venado Tuerto",
-    "Reconquista",
-    "Santo Tomé",
-    "Villa Gobernador Gálvez",
-    "Esperanza",
-    "Granadero Baigorria",
-    "Casilda",
-    "San Lorenzo",
-    "Sunchales",
-    "Otra localidad"
-  ],
-  "Mendoza": [
-    "Mendoza Capital",
-    "San Rafael",
-    "Godoy Cruz",
-    "Guaymallén",
-    "Las Heras",
-    "Maipú",
-    "Luján de Cuyo",
-    "San Martín",
-    "Rivadavia",
-    "Tunuyán",
-    "General Alvear",
-    "Malargüe",
-    "Tupungato",
-    "Otra localidad"
-  ],
-  "Catamarca": [
-    "San Fernando del Valle de Catamarca",
-    "Valle Viejo",
-    "Andalgalá",
-    "Belén",
-    "Santa María",
-    "Tinogasta",
-    "Recreo",
-    "Otra localidad"
-  ],
-  "Chaco": [
-    "Resistencia",
-    "Presidencia Roque Sáenz Peña",
-    "Barranqueras",
-    "Fontana",
-    "Villa Ángela",
-    "Castelli",
-    "Charata",
-    "Quitilipi",
-    "Otra localidad"
-  ],
-  "Corrientes": [
-    "Corrientes Capital",
-    "Goya",
-    "Paso de los Libres",
-    "Curuzú Cuatiá",
-    "Mercedes",
-    "Bella Vista",
-    "Santo Tomé",
-    "Monte Caseros",
-    "Ituzaingó",
-    "Otra localidad"
-  ],
-  "Entre Ríos": [
-    "Paraná",
-    "Concordia",
-    "Gualeguaychú",
-    "Concepción del Uruguay",
-    "Gualeguay",
-    "Villaguay",
-    "Chajarí",
-    "Victoria",
-    "La Paz",
-    "Colón",
-    "Otra localidad"
-  ],
-  "Formosa": [
-    "Formosa Capital",
-    "Clorinda",
-    "Pirané",
-    "El Colorado",
-    "Ingeniero Juárez",
-    "Las Lomitas",
-    "Otra localidad"
-  ],
-  "Jujuy": [
-    "San Salvador de Jujuy",
-    "San Pedro de Jujuy",
-    "Palpalá",
-    "Libertador General San Martín",
-    "Perico",
-    "La Quiaca",
-    "Humahuaca",
-    "Tilcara",
-    "Otra localidad"
-  ],
-  "La Pampa": [
-    "Santa Rosa",
-    "General Pico",
-    "General Acha",
-    "Eduardo Castex",
-    "Realicó",
-    "Intendente Alvear",
-    "25 de Mayo",
-    "Otra localidad"
-  ],
-  "La Rioja": [
-    "La Rioja Capital",
-    "Chilecito",
-    "Chamical",
-    "Aimogasta",
-    "Chepes",
-    "Villa Unión",
-    "Otra localidad"
-  ],
-  "Misiones": [
-    "Posadas",
-    "Oberá",
-    "Eldorado",
-    "Puerto Iguazú",
-    "Apóstoles",
-    "Leandro N. Alem",
-    "San Vicente",
-    "Montecarlo",
-    "Otra localidad"
-  ],
-  "Salta": [
-    "Salta Capital",
-    "San Ramón de la Nueva Orán",
-    "Tartagal",
-    "General Güemes",
-    "San José de Metán",
-    "Rosario de la Frontera",
-    "Cafayate",
-    "Otra localidad"
-  ],
-  "San Juan": [
-    "San Juan Capital",
-    "Rawson",
-    "Chimbas",
-    "Rivadavia",
-    "Santa Lucía",
-    "Pocito",
-    "Caucete",
-    "Jáchal",
-    "Otra localidad"
-  ],
-  "San Luis": [
-    "San Luis Capital",
-    "Villa Mercedes",
-    "Merlo",
-    "La Punta",
-    "Juana Koslay",
-    "Justo Daract",
-    "Otra localidad"
-  ],
-  "Santiago del Estero": [
-    "Santiago del Estero Capital",
-    "La Banda",
-    "Termas de Río Hondo",
-    "Frías",
-    "Añatuya",
-    "Fernández",
-    "Otra localidad"
-  ],
-  "Tucumán": [
-    "San Miguel de Tucumán",
-    "Banda del Río Salí",
-    "Yerba Buena",
-    "Villa Carmela",
-    "Concepción",
-    "Tafí Viejo",
-    "Aguilares",
-    "Famaillá",
-    "Monteros",
-    "Tafí del Valle",
-    "Otra localidad"
-  ]
+// Títulos institucionales exactos de cada bloque
+const TITULOS_BLOQUES = {
+  1: "Bloque 1: Tecnologías, especialidades y capacidades instaladas en la región",
+  2: "Bloque 2: Investigación aplicada, seguridad y decisiones interdisciplinarias",
+  3: "Bloque 3: Cuidado integral: anticipación, acompañamiento y continuidad"
 };
 
 // Estado de inicialización de Firebase
@@ -346,7 +34,7 @@ try {
     console.info("[CEMNPA] Firebase Firestore inicializado correctamente.");
   } else {
     console.warn(
-      "[CEMNPA] Credenciales de Firebase pendientes. La aplicación funciona en modo demostración local hasta configurar js/firebase-config.js."
+      "[CEMNPA] Credenciales de Firebase pendientes. La aplicación funciona en modo demostración local."
     );
   }
 } catch (error) {
@@ -354,412 +42,400 @@ try {
 }
 
 /**
- * Guarda el objeto de inscripción en la colección "inscripciones" de Firebase Firestore.
- * @param {Object} datosInscripcion - Objeto con los datos del participante
- * @returns {Promise<string>} - ID del documento generado en Firestore
+ * Separa nombre y apellido en base al texto completo ingresado.
+ * @param {string} nombreCompleto 
+ * @returns {{ nombre: string, apellido: string }}
  */
-export async function guardarInscripcion(datosInscripcion) {
+function separarNombreApellido(nombreCompleto) {
+  const partes = nombreCompleto.trim().split(/\s+/);
+  if (partes.length === 0 || !partes[0]) {
+    return { nombre: "", apellido: "" };
+  }
+  if (partes.length === 1) {
+    return { nombre: partes[0], apellido: "" };
+  }
+  if (partes.length === 2) {
+    return { nombre: partes[0], apellido: partes[1] };
+  }
+  return {
+    nombre: partes.slice(0, -1).join(" "),
+    apellido: partes[partes.length - 1]
+  };
+}
+
+/**
+ * Guarda la confirmación de un bloque en Firebase Firestore y en localStorage.
+ * @param {Object} datos
+ * @returns {Promise<string>} ID generado para el documento
+ */
+export async function guardarConfirmacionBloque(datos) {
+  const payload = {
+    ...datos,
+    fechaCreacion: serverTimestamp(),
+    timestampLocal: new Date().toISOString()
+  };
+
   if (firebaseInitialized && db) {
-    const docRef = await addDoc(collection(db, "inscripciones"), {
-      ...datosInscripcion,
-      fechaCreacion: serverTimestamp(),
-      timestampLocal: new Date().toISOString()
-    });
+    const docRef = await addDoc(collection(db, "inscripciones"), payload);
     return docRef.id;
   } else {
-    console.info("[CEMNPA Demo] Guardando confirmación localmente:", datosInscripcion);
+    console.info("[CEMNPA Demo] Guardando confirmación de bloque localmente:", payload);
     const mockId = "CONF-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-    const inscripcionesPrevias = JSON.parse(localStorage.getItem("cemnpa_inscripciones") || "[]");
-    inscripcionesPrevias.push({
+    const previas = JSON.parse(localStorage.getItem("cemnpa_inscripciones") || "[]");
+    previas.push({
       id: mockId,
-      ...datosInscripcion,
-      timestampLocal: new Date().toISOString()
+      ...payload,
+      fechaCreacion: new Date().toISOString()
     });
-    localStorage.setItem("cemnpa_inscripciones", JSON.stringify(inscripcionesPrevias));
+    localStorage.setItem("cemnpa_inscripciones", JSON.stringify(previas));
     return mockId;
   }
 }
 
-// Elementos del DOM e inicialización
+/**
+ * Cancela una confirmación de bloque eliminando el registro de Firestore y de localStorage.
+ * @param {string} docId 
+ */
+export async function cancelarConfirmacionBloque(docId) {
+  if (!docId) return;
+
+  if (firebaseInitialized && db) {
+    try {
+      await deleteDoc(doc(db, "inscripciones", docId));
+      console.info(`[CEMNPA] Confirmación ${docId} eliminada correctamente de Firestore.`);
+    } catch (err) {
+      console.error("[CEMNPA] Error al eliminar confirmación en Firestore:", err);
+    }
+  }
+
+  // Eliminar también de demostración local si existiera
+  const previas = JSON.parse(localStorage.getItem("cemnpa_inscripciones") || "[]");
+  const filtradas = previas.filter(item => item.id !== docId);
+  localStorage.setItem("cemnpa_inscripciones", JSON.stringify(filtradas));
+}
+
+// Inicialización de la interfaz de usuario
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("registrationForm");
-  const submitBtn = document.getElementById("submitBtn");
+  const nombreApellidoInput = document.getElementById("nombreApellidoInput");
+  const errorNombreApellido = document.getElementById("error-nombre-apellido");
   const formAlert = document.getElementById("formAlert");
-  const selectedBlockBanner = document.getElementById("selectedBlockBanner");
-  const selectedBlockText = document.getElementById("selectedBlockText");
-  const resetBlockBtn = document.getElementById("resetBlockBtn");
-
-  const modalidadRadios = document.querySelectorAll('input[name="modalidad"]');
-  const modalidadCards = document.querySelectorAll(".modality-card");
-
-  const nombreInput = document.getElementById("nombreInput");
-  const apellidoInput = document.getElementById("apellidoInput");
-  const profesionSelect = document.getElementById("profesionSelect");
-  const emailInput = document.getElementById("emailInput");
-
-  // Selectores dependientes de Provincia y Ciudad
-  const provinciaSelect = document.getElementById("provinciaSelect");
-  const ciudadSelect = document.getElementById("ciudadSelect");
-  const otraCiudadGroup = document.getElementById("otraCiudadGroup");
-  const otraCiudadInput = document.getElementById("otraCiudadInput");
 
   // Modal de confirmación
   const confirmationModal = document.getElementById("confirmationModal");
-  const modalSummary = document.getElementById("modalSummary");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalText = document.getElementById("modalText");
   const modalCloseBtn = document.getElementById("modalCloseBtn");
 
-  // 1. Cargar Provincias en el dropdown
-  cargarProvincias();
-
-  function cargarProvincias() {
-    const provincias = Object.keys(UBICACIONES_ARGENTINA).sort((a, b) => {
-      // Priorizar Santa Cruz primera por ser sede provincial del evento
-      if (a === "Santa Cruz") return -1;
-      if (b === "Santa Cruz") return 1;
-      return a.localeCompare(b, "es");
-    });
-
-    provincias.forEach(prov => {
-      const option = document.createElement("option");
-      option.value = prov;
-      option.textContent = prov;
-      provinciaSelect.appendChild(option);
-    });
+  // 1. Restaurar Nombre y Apellido guardado en la sesión
+  const nombreGuardado = localStorage.getItem("cemnpa_nombre_apellido");
+  if (nombreGuardado && nombreApellidoInput) {
+    nombreApellidoInput.value = nombreGuardado;
   }
 
-  // Cambio de Provincia -> Cargar Ciudades
-  provinciaSelect.addEventListener("change", () => {
-    const provSeleccionada = provinciaSelect.value;
-    clearError("provincia");
-
-    ciudadSelect.innerHTML = '<option value="" disabled selected>Seleccione su ciudad o localidad</option>';
-    ciudadSelect.disabled = false;
-    otraCiudadGroup.style.display = "none";
-    otraCiudadInput.value = "";
-    clearError("ciudad");
-    clearError("otra-ciudad");
-
-    const ciudades = UBICACIONES_ARGENTINA[provSeleccionada] || ["Otra localidad"];
-    ciudades.forEach(ciudad => {
-      const option = document.createElement("option");
-      option.value = ciudad;
-      option.textContent = ciudad;
-      ciudadSelect.appendChild(option);
-    });
-  });
-
-  // Cambio de Ciudad -> Mostrar input si elige 'Otra localidad'
-  ciudadSelect.addEventListener("change", () => {
-    clearError("ciudad");
-    if (ciudadSelect.value === "Otra localidad") {
-      otraCiudadGroup.style.display = "block";
-      otraCiudadInput.focus();
-    } else {
-      otraCiudadGroup.style.display = "none";
-      otraCiudadInput.value = "";
-      clearError("otra-ciudad");
-    }
-  });
-
-  otraCiudadInput.addEventListener("input", () => clearError("otra-ciudad"));
-
-  // 2. Manejo visual de radio buttons de modalidad
-  modalidadRadios.forEach(radio => {
-    radio.addEventListener("change", () => {
-      modalidadCards.forEach(card => card.classList.remove("is-selected"));
-      if (radio.checked) {
-        radio.closest(".modality-card").classList.add("is-selected");
-        clearError("modalidad");
+  if (nombreApellidoInput) {
+    nombreApellidoInput.addEventListener("input", () => {
+      const valor = nombreApellidoInput.value;
+      localStorage.setItem("cemnpa_nombre_apellido", valor);
+      if (valor.trim().length >= 3) {
+        clearInputError(nombreApellidoInput, errorNombreApellido);
       }
     });
-  });
-
-  // Momentos temáticos: los checkboxes son la ÚNICA fuente de verdad.
-  // Banner, botones de las tarjetas y modal se derivan de su estado.
-  const blockCheckboxes = document.querySelectorAll('input[name="bloquesInteres"]');
-  const blockButtons = document.querySelectorAll(".btn-block-action");
-
-  blockCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", sincronizarBloques);
-  });
-
-  // 3. Limpieza de errores en tiempo real
-  nombreInput.addEventListener("input", () => clearError("nombre"));
-  apellidoInput.addEventListener("input", () => clearError("apellido"));
-  profesionSelect.addEventListener("change", () => clearError("profesion"));
-  emailInput.addEventListener("input", () => clearError("email"));
-
-  // 4. Botones "¡Me interesa!": marcan el bloque y llevan al formulario
-  blockButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      const checkbox = document.getElementById(button.getAttribute("data-checkbox-id"));
-      if (checkbox) checkbox.checked = true;
-      sincronizarBloques();
-
-      document.getElementById("formulario-inscripcion")
-        .scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-
-  resetBlockBtn.addEventListener("click", () => {
-    blockCheckboxes.forEach(cb => { cb.checked = false; });
-    sincronizarBloques();
-  });
-
-  /** Devuelve los números de bloque marcados, ordenados. Ej: [1, 3] */
-  function obtenerBloquesSeleccionados() {
-    return Array.from(blockCheckboxes)
-      .filter(cb => cb.checked)
-      .map(cb => parseInt(cb.id.replace("interes-bloque-", ""), 10))
-      .sort((a, b) => a - b);
   }
 
-  /** [1] -> "1" | [1,2] -> "1, 2" | [1,2,3] -> "1, 2, 3" */
-  function formatearListaBloques(nums) {
-    return nums.join(", ");
-  }
-
-  /** Refleja el estado de los checkboxes en tarjetas, botones y banner. */
-  function sincronizarBloques() {
-    blockCheckboxes.forEach(cb => {
-      const card = cb.closest(".block-interest-card");
-      if (card) card.classList.toggle("is-selected", cb.checked);
-    });
-
-    blockButtons.forEach(btn => {
-      const cb = document.getElementById(btn.getAttribute("data-checkbox-id"));
-      const marcado = Boolean(cb && cb.checked);
-      btn.classList.toggle("is-selected", marcado);
-      btn.textContent = marcado ? "✓ Seleccionado" : "¡Me interesa!";
-    });
-
-    const nums = obtenerBloquesSeleccionados();
-    if (nums.length > 0) {
-      selectedBlockText.textContent = nums.length === 1
-        ? `Participaré del bloque ${nums[0]}`
-        : `Participaré de los bloques ${formatearListaBloques(nums)}`;
-      selectedBlockBanner.classList.add("active");
-    } else {
-      selectedBlockBanner.classList.remove("active");
+  // 2. Estado de bloques confirmados en almacenamiento local
+  // Formato: { "1": { docId: "...", modalidad: "Presencial" }, ... }
+  function obtenerConfirmacionesLocales() {
+    try {
+      return JSON.parse(localStorage.getItem("cemnpa_bloques_confirmados") || "{}");
+    } catch {
+      return {};
     }
   }
 
-  // 5. Validaciones de formulario
-  function validarFormulario() {
-    let isValid = true;
+  function guardarConfirmacionesLocales(data) {
+    localStorage.setItem("cemnpa_bloques_confirmados", JSON.stringify(data));
+  }
 
-    // Modalidad
-    const modalidadSeleccionada = document.querySelector('input[name="modalidad"]:checked');
-    if (!modalidadSeleccionada) {
-      showError("modalidad", "Por favor, seleccione una modalidad de asistencia.");
-      isValid = false;
-    } else {
-      clearError("modalidad");
+  // 3. Inicializar interactividad de los 3 Bloques Temáticos
+  [1, 2, 3].forEach(bloqueNum => {
+    inicializarBloque(bloqueNum);
+  });
+
+  function inicializarBloque(num) {
+    const btnInteresa = document.getElementById(`btn-interesa-${num}`);
+    const modalityPanel = document.getElementById(`modality-panel-${num}`);
+    const confirmedPanel = document.getElementById(`confirmed-panel-${num}`);
+    const btnConfirmar = document.getElementById(`btn-confirmar-${num}`);
+    const btnCancelar = document.getElementById(`btn-cancelar-${num}`);
+    const btnCancelarConfirm = document.getElementById(`btn-cancelar-confirm-${num}`);
+    const errorBloque = document.getElementById(`error-bloque-${num}`);
+    const confirmedModalityText = document.getElementById(`confirmed-modality-${num}`);
+    const radioChoices = document.querySelectorAll(`input[name="modalidad-bloque-${num}"]`);
+
+    if (!btnInteresa || !modalityPanel || !confirmedPanel) return;
+
+    // Restaurar estado si ya estaba confirmado previamente
+    const confirmaciones = obtenerConfirmacionesLocales();
+    if (confirmaciones[num]) {
+      const { modalidad } = confirmaciones[num];
+      mostrarPanelConfirmado(modalidad);
     }
 
-    // Nombre
-    if (!nombreInput.value.trim() || nombreInput.value.trim().length < 2) {
-      showError("nombre", "Por favor, ingrese un nombre válido.");
-      isValid = false;
-    } else {
-      clearError("nombre");
+    // A. Clic en "¡Me interesa!" -> Abrir selector de modalidad
+    btnInteresa.addEventListener("click", () => {
+      ocultarElemento(btnInteresa);
+      mostrarElemento(modalityPanel);
+      limpiarErrorBloque();
+
+      // Si no ha ingresado el nombre aún, darle pista visual suave sin bloquear
+      if (!nombreApellidoInput.value.trim()) {
+        mostrarErrorBloque("Recuerde ingresar su Nombre y Apellido arriba para confirmar.");
+      }
+    });
+
+    // B. Clic en "Cancelar" (antes de confirmar) -> Volver a botón ¡Me interesa!
+    btnCancelar.addEventListener("click", () => {
+      deseleccionarRadios(radioChoices);
+      limpiarErrorBloque();
+      ocultarElemento(modalityPanel);
+      mostrarElemento(btnInteresa);
+    });
+
+    // C. Cambio en opciones de modalidad (Presencial o Virtual)
+    radioChoices.forEach(radio => {
+      radio.addEventListener("change", () => {
+        limpiarErrorBloque();
+        actualizarEstiloSeleccionRadios(num);
+      });
+    });
+
+    // D. Clic en "Confirmar" -> Validar, Guardar en Firebase y mostrar Modal
+    btnConfirmar.addEventListener("click", async () => {
+      limpiarErrorBloque();
+
+      const nombreCompleto = nombreApellidoInput.value.trim();
+      if (!nombreCompleto || nombreCompleto.length < 3) {
+        showInputError(
+          nombreApellidoInput,
+          errorNombreApellido,
+          "Por favor, ingrese su nombre y apellido para completar la confirmación."
+        );
+        mostrarErrorBloque("Por favor, ingrese su nombre y apellido en el formulario arriba.");
+        nombreApellidoInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        nombreApellidoInput.focus();
+        return;
+      }
+
+      const radioSeleccionado = document.querySelector(`input[name="modalidad-bloque-${num}"]:checked`);
+      if (!radioSeleccionado) {
+        mostrarErrorBloque("Por favor, seleccione una modalidad: Presencial o Virtual.");
+        return;
+      }
+
+      const modalidad = radioSeleccionado.value;
+      const nombresSeparados = separarNombreApellido(nombreCompleto);
+
+      const datosBloque = {
+        nombreApellido: nombreCompleto,
+        nombre: nombresSeparados.nombre,
+        apellido: nombresSeparados.apellido,
+        bloqueNumero: num,
+        bloqueNombre: `Bloque ${num}`,
+        bloqueTitulo: TITULOS_BLOQUES[num] || `Bloque ${num}`,
+        modalidad: modalidad,
+        modalidadAsistencia: modalidad, // compatibilidad
+        estado: "Confirmado"
+      };
+
+      setBotonCargando(btnConfirmar, true);
+
+      try {
+        const docId = await guardarConfirmacionBloque(datosBloque);
+
+        // Guardar estado local
+        const estadoActual = obtenerConfirmacionesLocales();
+        estadoActual[num] = {
+          docId: docId,
+          modalidad: modalidad,
+          timestamp: new Date().toISOString()
+        };
+        guardarConfirmacionesLocales(estadoActual);
+
+        setBotonCargando(btnConfirmar, false);
+
+        // Transición a estado confirmado
+        mostrarPanelConfirmado(modalidad);
+
+        // Mostrar Modal institucional de éxito
+        abrirModalExito(num, modalidad);
+      } catch (err) {
+        console.error(`[CEMNPA] Error al confirmar Bloque ${num}:`, err);
+        setBotonCargando(btnConfirmar, false);
+        mostrarErrorBloque("Ocurrió un error al guardar su confirmación. Por favor, reintente.");
+      }
+    });
+
+    // E. Clic en "Cancelar confirmación" -> Quitar confirmación si tocó sin querer
+    btnCancelarConfirm.addEventListener("click", async () => {
+      const confirmaCancelacion = window.confirm(
+        `¿Desea cancelar su confirmación para el Bloque ${num}?`
+      );
+      if (!confirmaCancelacion) return;
+
+      btnCancelarConfirm.disabled = true;
+      btnCancelarConfirm.textContent = "Cancelando...";
+
+      const estadoActual = obtenerConfirmacionesLocales();
+      const registro = estadoActual[num];
+
+      if (registro && registro.docId) {
+        await cancelarConfirmacionBloque(registro.docId);
+      }
+
+      delete estadoActual[num];
+      guardarConfirmacionesLocales(estadoActual);
+
+      btnCancelarConfirm.disabled = false;
+      btnCancelarConfirm.textContent = "Cancelar confirmación";
+
+      // Resetear tarjeta a estado inicial
+      deseleccionarRadios(radioChoices);
+      actualizarEstiloSeleccionRadios(num);
+      ocultarElemento(confirmedPanel);
+      ocultarElemento(modalityPanel);
+      mostrarElemento(btnInteresa);
+
+      mostrarAlertaGlobal(`Se canceló su confirmación para el Bloque ${num}.`, "info");
+    });
+
+    // Funciones auxiliares para el bloque
+    function mostrarPanelConfirmado(modalidad) {
+      ocultarElemento(btnInteresa);
+      ocultarElemento(modalityPanel);
+      if (confirmedModalityText) {
+        confirmedModalityText.textContent = modalidad;
+      }
+      mostrarElemento(confirmedPanel);
     }
 
-    // Apellido
-    if (!apellidoInput.value.trim() || apellidoInput.value.trim().length < 2) {
-      showError("apellido", "Por favor, ingrese un apellido válido.");
-      isValid = false;
-    } else {
-      clearError("apellido");
+    function mostrarErrorBloque(msg) {
+      if (errorBloque) {
+        errorBloque.textContent = msg;
+        errorBloque.classList.add("visible");
+      }
     }
 
-    // Profesión
-    if (!profesionSelect.value) {
-      showError("profesion", "Por favor, seleccione su profesión u ocupación.");
-      isValid = false;
-    } else {
-      clearError("profesion");
+    function limpiarErrorBloque() {
+      if (errorBloque) {
+        errorBloque.textContent = "";
+        errorBloque.classList.remove("visible");
+      }
     }
+  }
 
-    // Email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailInput.value.trim() || !emailRegex.test(emailInput.value.trim())) {
-      showError("email", "Por favor, ingrese un correo electrónico válido.");
-      isValid = false;
-    } else {
-      clearError("email");
-    }
-
-    // Provincia
-    if (!provinciaSelect.value) {
-      showError("provincia", "Por favor, seleccione su provincia.");
-      isValid = false;
-    } else {
-      clearError("provincia");
-    }
-
-    // Ciudad
-    if (!ciudadSelect.value) {
-      showError("ciudad", "Por favor, seleccione su ciudad o localidad.");
-      isValid = false;
-    } else {
-      clearError("ciudad");
-    }
-
-    // Si eligió 'Otra localidad', validar campo de texto
-    if (ciudadSelect.value === "Otra localidad") {
-      if (!otraCiudadInput.value.trim() || otraCiudadInput.value.trim().length < 2) {
-        showError("otra-ciudad", "Por favor, especifique el nombre de su localidad.");
-        isValid = false;
+  // 4. Helpers de Interfaz
+  function actualizarEstiloSeleccionRadios(num) {
+    const choices = document.querySelectorAll(`#modality-panel-${num} .block-modality-choice`);
+    choices.forEach(label => {
+      const input = label.querySelector('input[type="radio"]');
+      if (input && input.checked) {
+        label.classList.add("is-selected");
       } else {
-        clearError("otra-ciudad");
+        label.classList.remove("is-selected");
       }
-    }
-
-    return isValid;
+    });
   }
 
-  function showError(fieldId, message) {
-    const errorEl = document.getElementById(`error-${fieldId}`);
+  function deseleccionarRadios(radios) {
+    radios.forEach(radio => {
+      radio.checked = false;
+      const label = radio.closest(".block-modality-choice");
+      if (label) label.classList.remove("is-selected");
+    });
+  }
+
+  function mostrarElemento(el) {
+    if (el) el.style.display = "";
+  }
+
+  function ocultarElemento(el) {
+    if (el) el.style.display = "none";
+  }
+
+  function setBotonCargando(btn, cargando) {
+    if (!btn) return;
+    const textSpan = btn.querySelector(".btn-text");
+    if (cargando) {
+      btn.classList.add("loading");
+      btn.disabled = true;
+      if (textSpan) textSpan.textContent = "Confirmando...";
+    } else {
+      btn.classList.remove("loading");
+      btn.disabled = false;
+      if (textSpan) textSpan.textContent = "Confirmar";
+    }
+  }
+
+  function showInputError(input, errorEl, message) {
+    if (input) input.classList.add("has-error");
     if (errorEl) {
       errorEl.textContent = message;
       errorEl.classList.add("visible");
     }
-    const inputEl = document.getElementById(`${fieldId}Input`) || document.getElementById(`${fieldId}Select`);
-    if (inputEl) {
-      inputEl.classList.add("has-error");
-    }
   }
 
-  function clearError(fieldId) {
-    const errorEl = document.getElementById(`error-${fieldId}`);
+  function clearInputError(input, errorEl) {
+    if (input) input.classList.remove("has-error");
     if (errorEl) {
+      errorEl.textContent = "";
       errorEl.classList.remove("visible");
     }
-    const inputEl = document.getElementById(`${fieldId}Input`) || document.getElementById(`${fieldId}Select`);
-    if (inputEl) {
-      inputEl.classList.remove("has-error");
-    }
   }
 
-  // 6. Envío de Formulario
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    hideAlert();
-
-    if (!validarFormulario()) {
-      showAlert("Por favor, complete todos los campos requeridos correctamente.", "error");
-      return;
-    }
-
-    const modalidadSeleccionada = document.querySelector('input[name="modalidad"]:checked').value;
-    const ciudadFinal = ciudadSelect.value === "Otra localidad" 
-      ? otraCiudadInput.value.trim() 
-      : ciudadSelect.value;
-
-    // Momentos temáticos seleccionados
-    const bloquesChecked = Array.from(
-      document.querySelectorAll('input[name="bloquesInteres"]:checked')
-    ).map(cb => cb.value);
-    const bloquesNumeros = obtenerBloquesSeleccionados();
-
-    const bloqueInteresResumen = bloquesChecked.length > 0
-      ? bloquesChecked.join(" | ")
-      : "Todas las Jornadas (General)";
-
-    const datosInscripcion = {
-      bloques: bloquesNumeros,
-      modalidadAsistencia: modalidadSeleccionada,
-      nombre: nombreInput.value.trim(),
-      apellido: apellidoInput.value.trim(),
-      profesionOcupacion: profesionSelect.value,
-      correoElectronico: emailInput.value.trim().toLowerCase(),
-      provincia: provinciaSelect.value,
-      ciudad: ciudadFinal,
-      bloquesInteres: bloquesChecked.length > 0 ? bloquesChecked : ["Todas las Jornadas (General)"],
-      bloqueInteres: bloqueInteresResumen
-    };
-
-    setLoadingState(true);
-
-    // El try abarca SOLO el guardado: un fallo de interfaz posterior
-    // nunca debe mostrarse como "error al guardar" si el dato ya está en la base.
-    try {
-      await guardarInscripcion(datosInscripcion);
-    } catch (error) {
-      console.error("[CEMNPA] Error al registrar la confirmación:", error);
-      showAlert(
-        "Ocurrió un error al procesar su confirmación. Por favor, verifique su conexión e intente nuevamente.",
-        "error"
-      );
-      setLoadingState(false);
-      return;
-    }
-
-    setLoadingState(false);
-    mostrarModalExito(bloquesNumeros);
-    reiniciarFormulario();
-  });
-
-  function reiniciarFormulario() {
-    form.reset();
-    ciudadSelect.innerHTML = '<option value="" disabled selected>Primero seleccione una provincia</option>';
-    ciudadSelect.disabled = true;
-    otraCiudadGroup.style.display = "none";
-    modalidadCards.forEach(card => card.classList.remove("is-selected"));
-    sincronizarBloques();
+  function mostrarAlertaGlobal(msg, tipo = "info") {
+    if (!formAlert) return;
+    formAlert.textContent = msg;
+    formAlert.className = `form-alert ${tipo}`;
+    setTimeout(() => {
+      formAlert.textContent = "";
+      formAlert.className = "form-alert";
+    }, 4500);
   }
 
-  function setLoadingState(isLoading) {
-    if (isLoading) {
-      submitBtn.classList.add("loading");
-      submitBtn.disabled = true;
-      submitBtn.querySelector(".btn-text").textContent = "Procesando confirmación...";
-    } else {
-      submitBtn.classList.remove("loading");
-      submitBtn.disabled = false;
-      submitBtn.querySelector(".btn-text").textContent = "Participaré";
+  // 5. Manejo del Modal de Confirmación
+  function abrirModalExito(bloqueNum, modalidad) {
+    if (!confirmationModal) return;
+    if (modalTitle) {
+      modalTitle.textContent = `Inscripción registrada BLOQUE ${bloqueNum}`;
     }
-  }
-
-  function showAlert(message, type) {
-    formAlert.textContent = message;
-    formAlert.className = `form-alert ${type}`;
-  }
-
-  function hideAlert() {
-    formAlert.textContent = "";
-    formAlert.className = "form-alert";
-  }
-
-  function mostrarModalExito(bloquesNumeros) {
-    const modalTitleEl = document.getElementById("modalTitle");
-    if (modalTitleEl) {
-      if (bloquesNumeros.length === 0) {
-        modalTitleEl.textContent = "Inscripción registrada";
-      } else if (bloquesNumeros.length === 1) {
-        modalTitleEl.textContent = `Inscripto al bloque ${bloquesNumeros[0]}`;
-      } else {
-        modalTitleEl.textContent = `Inscripto a los bloques ${formatearListaBloques(bloquesNumeros)}`;
-      }
+    if (modalText) {
+      modalText.textContent = `Su confirmación para el Bloque ${bloqueNum} en modalidad ${modalidad} ha sido procesada exitosamente.`;
     }
-
-    if (modalSummary) {
-      modalSummary.style.display = "none";
-      modalSummary.innerHTML = "";
-    }
-
     confirmationModal.classList.add("active");
-    modalCloseBtn.focus();
+    if (modalCloseBtn) modalCloseBtn.focus();
   }
 
-  modalCloseBtn.addEventListener("click", () => {
-    confirmationModal.classList.remove("active");
-  });
-
-  confirmationModal.addEventListener("click", (e) => {
-    if (e.target === confirmationModal) {
+  function cerrarModal() {
+    if (confirmationModal) {
       confirmationModal.classList.remove("active");
+    }
+  }
+
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener("click", cerrarModal);
+  }
+
+  if (confirmationModal) {
+    confirmationModal.addEventListener("click", (e) => {
+      if (e.target === confirmationModal) {
+        cerrarModal();
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && confirmationModal && confirmationModal.classList.contains("active")) {
+      cerrarModal();
     }
   });
 });
