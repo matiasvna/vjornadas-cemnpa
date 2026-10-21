@@ -8,6 +8,12 @@
       "firebase.json",
       "firestore.rules",
       ".firebaserc",
+      ".gitignore",
+      "README.md",
+      "server.js",
+      ".git",
+      ".git/**",
+      ".github",
       ".github/**",
       "**/.*",
       "**/node_modules/**"
