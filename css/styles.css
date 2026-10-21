@@ -100,65 +100,68 @@ body {
 }
 
 .header-logo-wrapper {
-  padding: 32px 24px 24px 24px;
+  padding: 16px 16px 12px 16px;
   text-align: center;
   background-color: var(--bg-card);
 }
 
 .header-logo {
-  max-width: 320px;
+  max-width: 860px;
   width: 100%;
   height: auto;
-  display: inline-block;
-  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--radius-sm);
 }
 
+/* Bloque compacto de la pregunta (diseño limpio y acotado) */
 .header-hero {
   background-color: var(--color-primary);
   color: #ffffff;
-  padding: 42px 24px;
+  padding: 16px 18px;
   text-align: center;
+  margin: 0 14px 14px 14px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(38, 63, 120, 0.15);
 }
 
 .header-kicker {
-  font-size: 0.88rem;
-  letter-spacing: 2px;
-  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 1.3px;
+  font-weight: 700;
   color: #aee4f5;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
 .header-title {
-  font-size: 2.15rem;
-  line-height: 1.2;
+  font-size: 1.25rem;
+  line-height: 1.25;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 14px;
-  letter-spacing: -0.5px;
+  margin-bottom: 5px;
 }
 
 .header-subtitle {
-  font-size: 1.25rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.4;
   font-weight: 600;
   color: #f1f9fc;
-  max-width: 780px;
+  max-width: 680px;
   margin: 0 auto;
 }
 
 .header-intro {
-  padding: 24px 20px;
+  padding: 12px 18px 16px 18px;
   background-color: var(--bg-card);
   text-align: center;
-  border-top: 1px solid rgba(38, 63, 120, 0.08);
 }
 
 .header-intro-text {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   color: var(--color-secondary);
-  line-height: 1.65;
-  max-width: 740px;
+  line-height: 1.55;
+  max-width: 680px;
   margin: 0 auto;
 }
 
@@ -831,46 +834,47 @@ body {
   }
 
   .site-header {
-    margin-top: 24px;
-    margin-bottom: 32px;
+    margin-top: 20px;
+    margin-bottom: 28px;
   }
 
   .header-logo-wrapper {
-    padding: 40px 32px 30px 32px;
+    padding: 24px 20px 14px 20px;
   }
 
   .header-logo {
-    max-width: 420px;
+    max-width: 860px;
   }
 
   .header-hero {
-    padding: 56px 36px;
+    padding: 18px 24px;
+    margin: 0 20px 16px 20px;
   }
 
   .header-kicker {
-    font-size: 1rem;
-    letter-spacing: 2.2px;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
   }
 
   .header-title {
-    font-size: 2.85rem;
-    margin-bottom: 16px;
+    font-size: 1.35rem;
+    margin-bottom: 6px;
   }
 
   .header-subtitle {
-    font-size: 1.45rem;
-    line-height: 1.55;
-    max-width: 840px;
+    font-size: 1.1rem;
+    line-height: 1.45;
+    max-width: 760px;
   }
 
   .header-intro-text {
-    font-size: 1.15rem;
-    line-height: 1.7;
-    max-width: 800px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 720px;
   }
 
   .registration-section {
-    padding: 36px 40px;
+    padding: 32px 36px;
   }
 
   .blocks-grid {
@@ -879,24 +883,12 @@ body {
   }
 
   .block-card-body {
-    padding: 26px 20px;
+    padding: 24px 20px;
   }
 }
 
 @media (min-width: 1024px) {
-  .header-hero {
-    padding: 68px 48px;
-  }
-
-  .header-title {
-    font-size: 3.25rem;
-  }
-
-  .header-subtitle {
-    font-size: 1.6rem;
-  }
-
   .blocks-section-title {
-    font-size: 1.85rem;
+    font-size: 1.75rem;
   }
 }
