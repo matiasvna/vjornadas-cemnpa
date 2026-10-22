@@ -126,12 +126,12 @@ body {
 }
 
 .header-kicker {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 1.3px;
   font-weight: 700;
   color: #aee4f5;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .header-title {
@@ -143,10 +143,10 @@ body {
 }
 
 .header-subtitle {
-  font-size: 1rem;
-  line-height: 1.4;
+  font-size: 1.05rem;
+  line-height: 1.42;
   font-weight: 600;
-  color: #f1f9fc;
+  color: #ffffff;
   max-width: 680px;
   margin: 0 auto;
 }
@@ -1128,6 +1128,15 @@ body {
   opacity: 0.95;
 }
 
+.footer-developer {
+  font-size: 0.8rem;
+  color: #aee4f5;
+  margin-top: 8px;
+  opacity: 0.9;
+  letter-spacing: 0.01em;
+}
+
+
 /* ==========================================================================
    Modal de Confirmación
    ========================================================================== */
@@ -1281,6 +1290,7 @@ body {
   .header-kicker {
     font-size: 0.75rem;
     letter-spacing: 1.5px;
+    margin-bottom: 6px;
   }
 
   .header-title {
